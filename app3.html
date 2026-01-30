@@ -53,16 +53,17 @@ button{
   font-weight:bold;
 }
 
+/* ★ 成功／ミスボタンを1.5倍 */
 .success{
   background:#ff9933;
-  height:32px;
-  font-size:13px;
+  height:48px;      /* ← 32px → 48px */
+  font-size:14px;
 }
 
 .miss{
   background:#66ccff;
-  height:32px;
-  font-size:13px;
+  height:48px;      /* ← 32px → 48px */
+  font-size:14px;
 }
 
 .footer{
@@ -144,7 +145,7 @@ textarea{
 
 <div class="totalBox">
   <div>ABCD 合計</div>
-  <div>成功:<span id="ts">0</span> / ミス:<span id="tm">0</span></div>
+  <div>成功：<span id="ts">0</span> ／ ミス：<span id="tm">0</span></div>
   <div class="totalRate" id="totalRate">0.0%</div>
   <div class="totalCI" id="totalCI">0.0 - 0.0%</div>
 </div>
@@ -195,7 +196,7 @@ labels.forEach(l=>{
       <button class="miss" onclick="add('${l}',0)">ミス</button>
     </div>
     <div class="footer">
-      <div class="value">S:0 / M:0</div>
+      <div class="value">成功：0 ／ ミス：0</div>
       <div class="rate">0.0%</div>
       <div class="ci">0.0 - 0.0%</div>
     </div>`;
@@ -217,7 +218,7 @@ function update(l){
     ci=`${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;
   }
   const f=d.el.querySelector(".footer");
-  f.children[0].textContent=`S:${d.s} / M:${d.m}`;
+  f.children[0].textContent=`成功：${d.s} ／ ミス：${d.m}`;
   f.children[1].textContent=`${r}%`;
   f.children[2].textContent=`${ci}%`;
 }
