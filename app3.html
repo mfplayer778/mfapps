@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>成功率算出君Ⅱ（音付き＋CSV）</title>
-
+<title>成功率算出君Ⅱ（スマホ対応）</title>
 <style>
 body{
   font-family: system-ui, -apple-system;
@@ -15,57 +14,41 @@ body{
 }
 h1{text-align:center;margin-bottom:10px;font-size:20px}
 
-/* ===== グリッド ===== */
 .grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
 }
+
 .box{
   border:2px solid #fff;
   border-radius:10px;
   padding:8px;
 }
+
 .box h2{text-align:center;margin:0 0 6px;font-size:16px}
+
 .buttons{
   display:flex;
   flex-direction:column;
   gap:6px;
   margin-bottom:6px;
 }
+
 button{
   border:none;
   border-radius:8px;
   font-weight:bold;
   color:#000;
 }
+
 .success,.miss{
-  height:42px;
-  font-size:15px;
+  height:50px;
+  font-size:16px;
+  width:100%;
 }
 .success{background:#ff9933}
 .miss{background:#66ccff}
-.reset{background:#ff6666;height:46px;font-size:16px;flex-grow:1;}
-.csv{
-  background:#b399ff;
-  width:100%;
-  height:44px;
-  font-size:15px;
-  border-radius:10px;
-  margin-top:10px; /* ここで上に余白追加 */
-}
-.soundToggle{
-  background:#66dd88;
-  height:46px;
-  font-size:14px;
-  border-radius:8px;
-  width:90px;
-}
-
-.footer{text-align:center}
-.value{font-size:14px}
-.rate{font-size:22px;font-weight:bold}
-.ci{font-size:13px;color:#ffeeaa}
 
 .totalBox{
   margin-top:10px;
@@ -75,15 +58,19 @@ button{
   text-align:center;
   background:#2b2b44;
 }
+
 .totalRate{font-size:26px;font-weight:bold}
 .totalCI{font-size:14px;color:#ffeeaa}
+.totalCount{font-size:16px;margin-top:4px}
 
 .memoSection{
   margin-top:10px;
   border:2px solid #fff;
   border-radius:10px;
   padding:6px;
+  margin-bottom:12px; /* ここで下の余白を追加 */
 }
+
 textarea{
   width:100%;
   height:70px;
@@ -95,31 +82,46 @@ textarea{
   box-sizing:border-box;
 }
 
-/* リセット＋音ON/OFF 横並び */
 .resetSoundWrapper{
   display:flex;
-  gap:6px;
-  margin-top:10px;
-  flex-wrap:nowrap;
+  gap:8px;
+  margin-bottom:6px;
+  flex-wrap:wrap;
   align-items:center;
 }
-@media (max-width:400px){
-  .success,.miss,.reset,.csv,.soundToggle{height:42px;font-size:14px}
-  .rate{font-size:20px}
-  .ci{font-size:12px}
+
+.csvWrapper{
+  margin-bottom:10px;
+}
+
+.reset{background:#ff6666; height:46px; font-size:16px; flex-grow:1;}
+.soundToggle{background:#66dd88; height:46px; font-size:14px; width:90px;}
+.csv{background:#cdaeff; height:44px; font-size:15px; width:100%; border-radius:8px;}
+
+button:active{opacity:0.7}
+
+.footer{text-align:center;margin-top:10px}
+.value{font-size:14px;margin:3px 0}
+.rate{font-size:22px;font-weight:bold;margin-top:4px}
+.ci{font-size:13px;color:#ffeeaa}
+
+@media (max-width: 400px){
+  .success,.miss,.reset,.csv,.soundToggle{height:50px;font-size:16px}
+  .rate{font-size:24px}
+  .ci{font-size:13px}
 }
 </style>
 </head>
 
 <body>
-<h1>成功率算出君Ⅱ</h1>
+<h1>成功率算出君Ⅱ（スマホ対応）</h1>
 
 <div class="grid" id="grid"></div>
 
 <div class="totalBox">
   <div>ABCD 合計成功率</div>
-  <div class="value">成功: <span id="totalSuccess">0</span> / ミス: <span id="totalMiss">0</span></div>
   <div class="totalRate" id="totalRate">0.0%</div>
+  <div class="totalCount" id="totalCount">成功:0 / ミス:0</div>
   <div class="totalCI" id="totalCI">0.0 - 0.0%</div>
 </div>
 
@@ -132,30 +134,11 @@ textarea{
   <button class="soundToggle" onclick="toggleSound()">🔊 音ON</button>
 </div>
 
-<!-- CSVボタンに余白がついた -->
-<button class="csv" onclick="exportCSV()">CSV出力</button>
+<div class="csvWrapper">
+  <button class="csv" onclick="exportCSV()">CSV出力</button>
+</div>
 
 <script>
-// ==== 音関係 ====
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let soundOn = true;
-function playTone(freq,duration=0.1,volume=0.25){
-  if(!soundOn) return;
-  const osc=audioCtx.createOscillator();
-  const gain=audioCtx.createGain();
-  osc.frequency.value=freq;
-  gain.gain.value=volume;
-  osc.connect(gain); gain.connect(audioCtx.destination);
-  osc.start(); osc.stop(audioCtx.currentTime+duration);
-}
-function playSuccessSound(){playTone(880,0.12,0.3);}
-function playMinusSound(){playTone(440,0.12,0.25);}
-function toggleSound(){
-  soundOn=!soundOn;
-  document.querySelector(".soundToggle").textContent = soundOn?"🔊 音ON":"🔇 音OFF";
-}
-
-// ==== データ初期化 ====
 const labels=["A","B","C","D"];
 const data={};
 const grid=document.getElementById("grid");
@@ -180,11 +163,17 @@ labels.forEach(l=>{
   data[l].el=box;
 });
 
-// ==== データ操作 ====
+const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+let soundOn=true;
+function playTone(freq,duration=0.1,volume=0.25){if(!soundOn)return; const osc=audioCtx.createOscillator(); const gain=audioCtx.createGain(); osc.frequency.value=freq; gain.gain.value=volume; osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime+duration);}
+function playSuccessSound(){playTone(880,0.12,0.3);}
+function playMinusSound(){playTone(440,0.12,0.25);}
+function toggleSound(){soundOn=!soundOn; document.querySelector(".soundToggle").textContent=soundOn?"🔊 音ON":"🔇 音OFF";}
+
 function add(l,isS){
-  if(isS){ data[l].s++; playSuccessSound(); }
-  else{ data[l].m++; playMinusSound(); }
-  update(l); updateTotal();
+  if(isS){ data[l].s++; playSuccessSound(); }else{ data[l].m++; playMinusSound(); }
+  update(l);
+  updateTotal();
 }
 
 function update(l){
@@ -205,10 +194,9 @@ function updateTotal(){
   let s=0,m=0;
   labels.forEach(l=>{s+=data[l].s; m+=data[l].m;});
   const t=s+m;
-  document.getElementById("totalSuccess").textContent=s;
-  document.getElementById("totalMiss").textContent=m;
   const rate=t?((s/t)*100).toFixed(1):"0.0";
   document.getElementById("totalRate").textContent=`${rate}%`;
+  document.getElementById("totalCount").textContent=`成功:${s} / ミス:${m}`;
 
   let ci="0.0 - 0.0";
   if(t){
@@ -218,7 +206,13 @@ function updateTotal(){
   document.getElementById("totalCI").textContent=`${ci}%`;
 }
 
-// ==== CSV出力 ====
+function resetAll(){
+  labels.forEach(l=>{data[l].s=0; data[l].m=0; update(l);});
+  updateTotal();
+  document.getElementById("memo").value="";
+  playMinusSound();
+}
+
 function exportCSV(){
   let csv="区分,成功,ミス,成功率(%)\n";
   labels.forEach(l=>{
@@ -233,19 +227,11 @@ function exportCSV(){
   csv+=`合計,${ts},${tm},${tr}\n\n`;
   csv+=`メモ,"${document.getElementById("memo").value.replace(/"/g,'""')}"\n`;
   csv+=`出力日時,${new Date().toLocaleString()}\n`;
-
   const blob=new Blob([csv],{type:"text/csv"});
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
   a.download="成功率算出結果.csv";
   a.click();
-}
-
-// ==== リセット ====
-function resetAll(){
-  labels.forEach(l=>{data[l].s=0; data[l].m=0; update(l);});
-  updateTotal();
-  document.getElementById("memo").value="";
 }
 </script>
 </body>
