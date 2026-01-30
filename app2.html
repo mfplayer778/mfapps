@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成功率算出君</title>
+
+<style>
+body {
+  font-family: system-ui, -apple-system;
+  background: #1e1e2f;
+  color: #fff;
+  margin: 0;
+  padding: 12px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+/* ===== メインボタン ===== */
+.mainButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+button {
+  font-weight: bold;
+  border-radius: 10px;
+  border: none;
+  color: #000;
+}
+
+.success { background: #ff9933; height: 50px; font-size:16px; width:100%; }
+.miss { background: #66ccff; height: 50px; font-size:16px; width:100%; }
+.reset { background: #ff6666; height: 50px; font-size:16px; flex-grow:1; }
+.soundToggle { background: #66dd88; height: 50px; font-size:14px; width:90px; }
+
+button:active { opacity:0.7; }
+
+/* ===== 説明文 ===== */
+.helpText {
+  font-size: 14px;
+  line-height: 1.4;
+  opacity: 0.85;
+  margin: 6px 0 10px;
+}
+
+/* ===== 入力欄 ===== */
+.inputSection {
+  border: 2px solid #fff;
+  border-radius: 10px;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+.inputBox {
+  width: 100%;
+  height: 34px;
+  font-size: 16px;
+  text-align: right;
+  border-radius: 6px;
+  border:1px solid #fff;
+  background: #1e1e2f;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+/* ===== テンキー ===== */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+.keypad button {
+  height: 36px;
+  font-size: 16px;
+  background: #bbbbbb;
+  border-radius: 6px;
+}
+
+/* ===== メモ欄 ===== */
+.memoSection {
+  border: 2px solid #fff;
+  border-radius: 10px;
+  padding: 6px;
+  margin-bottom: 10px;
+}
+
+.memoSection textarea {
+  width: 100%;
+  height: 70px;
+  font-size: 16px;
+  border: none;
+  background: #1e1e2f;
+  color: #fff;
+  resize: vertical;
+  padding: 6px;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+/* ===== リセット+音 ===== */
+.resetSoundWrapper {
+  display:flex;
+  gap:6px;
+  margin-bottom: 10px;
+  flex-wrap: nowrap; /* 改行しない */
+  align-items:center;
+}
+
+/* ===== フッター ===== */
+.footer {
+  background: #2b2b44;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.value { font-size:16px; margin:3px 0; }
+.rate { font-size:28px; font-weight:bold; margin-top:4px; }
+.ci { font-size:14px; margin-top:3px; color:#ffeeaa; }
+
+@media (max-width: 400px) {
+  .success, .miss, .reset, .soundToggle { height: 45px; font-size:15px; }
+  .inputBox { height: 32px; font-size:15px; }
+  .keypad button { height:32px; font-size:15px; }
+  .memoSection textarea { height:60px; font-size:15px; }
+  .rate { font-size:24px; }
+  .ci { font-size:13px; }
+}
+</style>
+</head>
+
+<body>
+<h1>成功率算出君</h1>
+
+<div class="mainButtons">
+  <button class="success" onclick="addSuccess()">成功</button>
+  <button class="miss" onclick="addMiss()">ミス</button>
+</div>
+
+<div class="helpText">
+  成功/ミスをクリックすると成功率を自動計算します。<br>
+  テンキー入力後に成功/ミスをクリックすると任意回数から再計算もできます。
+</div>
+
+<div class="inputSection">
+  <input id="inputValue" class="inputBox" type="text" placeholder="数値入力" readonly>
+  <div class="keypad">
+    <button onclick="addNum(1)">1</button>
+    <button onclick="addNum(2)">2</button>
+    <button onclick="addNum(3)">3</button>
+    <button onclick="addNum(4)">4</button>
+    <button onclick="addNum(5)">5</button>
+    <button onclick="addNum(6)">6</button>
+    <button onclick="addNum(7)">7</button>
+    <button onclick="addNum(8)">8</button>
+    <button onclick="addNum(9)">9</button>
+    <button onclick="clearNum()">C</button>
+    <button onclick="addNum(0)">0</button>
+    <button onclick="backspace()">←</button>
+  </div>
+</div>
+
+<div class="memoSection">
+  <textarea id="memo" placeholder="メモ欄：自由に書き込み可能"></textarea>
+</div>
+
+<div class="resetSoundWrapper">
+  <button class="reset" onclick="resetAll()">リセット</button>
+  <button class="soundToggle" onclick="toggleSound()">🔊 音ON</button>
+</div>
+
+<div class="footer">
+  <div class="value">成功回数：<span id="success">0</span></div>
+  <div class="value">ミス回数：<span id="miss">0</span></div>
+  <div class="rate">成功率：<span id="rate">0.0</span>%</div>
+  <div class="ci">95% 信頼区間：<span id="ci">0.0 - 0.0</span>% ←この範囲に真値があるョ</div>
+</div>
+
+<script>
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let soundOn = true;
+
+function playTone(freq,duration=0.1,volume=0.25){if(!soundOn)return; const osc=audioCtx.createOscillator(); const gain=audioCtx.createGain(); osc.frequency.value=freq; gain.gain.value=volume; osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime+duration);}
+function playSuccessSound(){playTone(880,0.12,0.3);}
+function playMinusSound(){playTone(440,0.12,0.25);}
+function toggleSound(){soundOn=!soundOn; document.querySelector(".soundToggle").textContent = soundOn?"🔊 音ON":"🔇 音OFF";}
+
+let success=0, miss=0;
+
+function getInputValue(){return Number(document.getElementById("inputValue").value)||1;}
+
+function updateRate(){
+  const total=success+miss;
+  const rate = total===0?0:(success/total*100).toFixed(1);
+  document.getElementById("rate").textContent = rate;
+  updateCI();
+}
+
+function updateCI(){
+  const total = success+miss;
+  if(total===0){ document.getElementById("ci").textContent="0.0 - 0.0"; return; }
+  const p = success/total;
+  const SE = Math.sqrt(p*(1-p)/total);
+  const lower = Math.max(0,(p - 1.96*SE)*100).toFixed(1);
+  const upper = Math.min(100,(p + 1.96*SE)*100).toFixed(1);
+  document.getElementById("ci").textContent = `${lower} - ${upper}`;
+}
+
+function addSuccess(){ playSuccessSound(); success+=getInputValue(); document.getElementById("success").textContent=success; updateRate(); clearNum();}
+function addMiss(){ playMinusSound(); miss+=getInputValue(); document.getElementById("miss").textContent=miss; updateRate(); clearNum();}
+function resetAll(){ playMinusSound(); success=0; miss=0; document.getElementById("success").textContent=0; document.getElementById("miss").textContent=0; updateRate(); clearNum(); document.getElementById("memo").value="";}
+
+function addNum(n){ document.getElementById("inputValue").value+=n; }
+function clearNum(){ document.getElementById("inputValue").value=""; }
+function backspace(){ const v=document.getElementById("inputValue").value; document.getElementById("inputValue").value=v.slice(0,-1); }
+</script>
+</body>
+</html>

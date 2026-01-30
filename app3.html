@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成功率算出君Ⅱ</title>
+
+<style>
+body{
+  font-family: system-ui, -apple-system;
+  background:#1e1e2f;
+  color:#fff;
+  margin:0;
+  padding:12px;
+}
+h1{text-align:center;margin-bottom:10px;font-size:20px}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.box{
+  border:2px solid #fff;
+  border-radius:10px;
+  padding:8px;
+}
+
+.box h2{text-align:center;margin:0 0 6px;font-size:16px}
+
+.buttons{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-bottom:6px;
+}
+
+button{
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+.success,.miss{
+  height:42px;
+  font-size:15px;
+}
+
+.success{background:#ff9933}
+.miss{background:#66ccff}
+
+.footer{text-align:center}
+.value{font-size:14px}
+.rate{font-size:22px;font-weight:bold}
+.ci{font-size:13px;color:#ffeeaa}
+
+.totalBox{
+  margin-top:10px;
+  border:2px solid #fff;
+  border-radius:10px;
+  padding:8px;
+  text-align:center;
+  background:#2b2b44;
+}
+
+.totalRate{font-size:26px;font-weight:bold}
+.totalCI{font-size:14px;color:#ffeeaa}
+
+.memoSection{
+  margin-top:10px;
+  border:2px solid #fff;
+  border-radius:10px;
+  padding:6px;
+}
+
+textarea{
+  width:100%;
+  height:70px;
+  background:#1e1e2f;
+  color:#fff;
+  border:none;
+  resize:vertical;
+  padding:6px;
+  box-sizing:border-box;
+}
+
+.reset{
+  background:#ff6666;
+  width:100%;
+  margin-top:10px;
+  height:46px;
+  font-size:16px;
+  border-radius:10px;
+}
+
+.csv{
+  background:#66dd88;
+  width:100%;
+  margin-top:6px;
+  height:44px;
+  font-size:15px;
+  border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+<h1>成功率算出君Ⅱ</h1>
+
+<div class="grid" id="grid"></div>
+
+<div class="totalBox">
+  <div>ABCD 合計成功率</div>
+  <div class="totalRate" id="totalRate">0.0%</div>
+  <div class="totalCI" id="totalCI">0.0 - 0.0%</div>
+</div>
+
+<div class="memoSection">
+  <textarea id="memo" placeholder="メモ欄"></textarea>
+</div>
+
+<!-- ★ リセット → CSV の順 -->
+<button class="reset" onclick="resetAll()">全リセット</button>
+<button class="csv" onclick="exportCSV()">CSV出力</button>
+
+<script>
+const labels=["A","B","C","D"];
+const data={};
+const grid=document.getElementById("grid");
+
+labels.forEach(l=>{
+  data[l]={s:0,m:0};
+  const box=document.createElement("div");
+  box.className="box";
+  box.innerHTML=`
+    <h2>${l}</h2>
+    <div class="buttons">
+      <button class="success" onclick="add('${l}',true)">成功</button>
+      <button class="miss" onclick="add('${l}',false)">ミス</button>
+    </div>
+    <div class="footer">
+      <div class="value">成功:0 / ミス:0</div>
+      <div class="rate">0.0%</div>
+      <div class="ci">0.0 - 0.0%</div>
+    </div>
+  `;
+  grid.appendChild(box);
+  data[l].el=box;
+});
+
+function add(l,isS){
+  if(isS) data[l].s++; else data[l].m++;
+  update(l); updateTotal();
+}
+
+function update(l){
+  const d=data[l], t=d.s+d.m;
+  const rate=t?((d.s/t)*100).toFixed(1):"0.0";
+  let ci="0.0 - 0.0";
+  if(t){
+    const p=d.s/t, se=Math.sqrt(p*(1-p)/t);
+    ci=`${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;
+  }
+  const f=d.el.querySelector(".footer");
+  f.children[0].textContent=`成功:${d.s} / ミス:${d.m}`;
+  f.children[1].textContent=`${rate}%`;
+  f.children[2].textContent=`${ci}%`;
+}
+
+function updateTotal(){
+  let s=0,m=0;
+  labels.forEach(l=>{s+=data[l].s; m+=data[l].m;});
+  const t=s+m;
+  const rate=t?((s/t)*100).toFixed(1):"0.0";
+  document.getElementById("totalRate").textContent=`${rate}%`;
+
+  let ci="0.0 - 0.0";
+  if(t){
+    const p=s/t, se=Math.sqrt(p*(1-p)/t);
+    ci=`${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;
+  }
+  document.getElementById("totalCI").textContent=`${ci}%`;
+}
+
+function exportCSV(){
+  let csv="区分,成功,ミス,成功率(%)\n";
+  labels.forEach(l=>{
+    const d=data[l], t=d.s+d.m;
+    const r=t?((d.s/t)*100).toFixed(1):"0.0";
+    csv+=`${l},${d.s},${d.m},${r}\n`;
+  });
+
+  let ts=0,tm=0;
+  labels.forEach(l=>{ts+=data[l].s; tm+=data[l].m;});
+  const tt=ts+tm;
+  const tr=tt?((ts/tt)*100).toFixed(1):"0.0";
+  csv+=`合計,${ts},${tm},${tr}\n\n`;
+  csv+=`メモ,"${document.getElementById("memo").value.replace(/"/g,'""')}"\n`;
+  csv+=`出力日時,${new Date().toLocaleString()}\n`;
+
+  const blob=new Blob([csv],{type:"text/csv"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="成功率算出結果.csv";
+  a.click();
+}
+
+function resetAll(){
+  labels.forEach(l=>{data[l].s=0; data[l].m=0; update(l);});
+  updateTotal();
+  document.getElementById("memo").value="";
+}
+</script>
+</body>
+</html>

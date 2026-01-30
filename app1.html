@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ジャッジカウンター（音ON/OFF切替）</title>
+
+<style>
+body {
+  font-family: system-ui, -apple-system;
+  background: #1e1e2f;
+  color: #fff;
+  margin: 0;
+  padding: 16px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+h1 {
+  text-align: center;
+  margin: 0 0 16px 0;
+  font-size: 24px;
+}
+
+.topButtons {
+  margin-bottom: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+#reset {
+  flex: 1;
+  height: 48px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background: #ff6666;
+  color: #000;
+}
+
+#soundToggle {
+  width: 120px;
+  height: 48px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: none;
+  background: #66ff99;
+  color: #000;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  background: #2b2b44;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.btnBox {
+  display: flex;
+  gap: 6px;
+}
+
+button {
+  width: 44px;
+  height: 40px;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  background: #4cafef;
+  color: #000;
+}
+
+button.minus {
+  background: #cccccc;
+}
+
+button:active {
+  opacity: 0.7;
+}
+
+.name {
+  width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sp,
+.countText {
+  width: 80px;
+  opacity: 0.9;
+  text-align: center;
+}
+
+.footer {
+  margin-top: 16px;
+  background: #2b2b44;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.total {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+#totalSp.overLimit {
+  color: red;
+}
+
+#resetCount {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background: #ffaa55;
+}
+
+@keyframes flash {
+  0% { background-color: #1e1e2f; }
+  25% { background-color: #ffffff; }
+  50% { background-color: #1e1e2f; }
+  75% { background-color: #ffffff; }
+  100% { background-color: #1e1e2f; }
+}
+
+.flash-bg {
+  animation: flash 0.5s ease-in-out;
+}
+</style>
+</head>
+
+<body>
+
+<h1>ジャッジカウンター</h1>
+
+<div class="topButtons">
+  <button id="reset" onclick="resetAll()">リセット</button>
+  <button id="soundToggle" onclick="toggleSound()">🔊 音：ON</button>
+</div>
+
+<div id="skillsContainer"></div>
+
+<div class="footer">
+  <div class="total">合計消費SP ：<span id="totalSp">0</span></div>
+  <div class="total">合計行動回数：<span id="totalAction">0</span></div>
+  <button id="resetCount" onclick="resetActionTotal()">合計行動回数のみリセット</button>
+</div>
+
+<script>
+/* ===== サウンド設定 ===== */
+let soundEnabled = true;
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playTone(freq, duration = 0.15, volume = 0.22, start = null, type = "sine") {
+  if (!soundEnabled) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.value = volume;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  if (start === null) start = audioCtx.currentTime;
+  osc.start(start);
+  osc.stop(start + duration);
+}
+
+function playPlusMinus(d) {
+  playTone(d > 0 ? 880 : 440, 0.08, 0.25);
+}
+
+function playResetSound() {
+  const t = audioCtx.currentTime;
+  playTone(660, 0.12, 0.22, t);
+  setTimeout(() => playTone(880, 0.12, 0.22), 60);
+}
+
+function playFanfare() {
+  const t = audioCtx.currentTime;
+  [261, 329, 392].forEach(f => playTone(f, 0.35, 0.18, t, "sawtooth"));
+  [523, 659, 784].forEach(f => playTone(f, 0.35, 0.22, t + 0.35, "sawtooth"));
+  [523, 659, 784, 1046].forEach(f => playTone(f, 0.35, 0.28, t + 0.7, "sawtooth"));
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  document.getElementById("soundToggle").textContent =
+    soundEnabled ? "🔊 音：ON" : "🔇 音：OFF";
+}
+
+/* ===== データ ===== */
+const skills = [
+  { name: "ブラストオール", sp: 1700 },
+  { name: "メガアイス", sp: 5000 },
+  { name: "ホーリー・メガファイヤーブレス", sp: 9999 },
+  { name: "スーパーダークブレス", sp: 12000 },
+  { name: "メテオ・デス", sp: 50000 },
+  { name: "その他", sp: 0 }
+];
+
+let actionCounts = skills.map(() => 0);
+let totalSp = 0;
+let totalAction = 0;
+const SP_LIMIT = 998299;
+let spReached = false;
+
+const container = document.getElementById("skillsContainer");
+
+/* ===== 行生成 ===== */
+skills.forEach((skill, i) => {
+  const row = document.createElement("div");
+  row.className = "row";
+  row.innerHTML = `
+    <span class="btnBox"><button onclick="change(${i},1)">＋</button></span>
+    <span class="name">${skill.name}</span>
+    <span class="sp">${skill.sp}</span>
+    <span id="c${i}" class="countText">0回</span>
+    <span class="btnBox"><button class="minus" onclick="change(${i},-1)">－</button></span>
+  `;
+  container.appendChild(row);
+});
+
+function flashBackground() {
+  document.body.classList.add("flash-bg");
+  setTimeout(() => document.body.classList.remove("flash-bg"), 500);
+}
+
+/* ===== ロジック ===== */
+function change(i, d) {
+  if (d < 0 && actionCounts[i] === 0) return;
+
+  playPlusMinus(d);
+
+  actionCounts[i] += d;
+  document.getElementById("c" + i).textContent = actionCounts[i] + "回";
+
+  totalSp += skills[i].sp * d;
+  if (totalSp < 0) totalSp = 0;
+
+  totalAction += d;
+  if (totalAction < 0) totalAction = 0;
+
+  updateTotals();
+}
+
+function updateTotals() {
+  const spElem = document.getElementById("totalSp");
+  spElem.textContent = totalSp;
+
+  if (totalSp >= SP_LIMIT) {
+    spElem.classList.add("overLimit");
+    if (!spReached) {
+      playFanfare();
+      flashBackground();
+      spReached = true;
+    }
+  } else {
+    spElem.classList.remove("overLimit");
+    spReached = false;
+  }
+
+  document.getElementById("totalAction").textContent = totalAction;
+}
+
+function resetActionTotal() {
+  playResetSound();
+  totalAction = 0;
+  updateTotals();
+}
+
+function resetAll() {
+  playResetSound();
+  actionCounts.fill(0);
+  totalSp = 0;
+  totalAction = 0;
+  spReached = false;
+  skills.forEach((_, i) => {
+    document.getElementById("c" + i).textContent = "0回";
+  });
+  updateTotals();
+}
+</script>
+
+</body>
+</html>
