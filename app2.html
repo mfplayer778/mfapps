@@ -6,134 +6,119 @@
 <title>成功率算出君</title>
 
 <style>
-body {
-  font-family: system-ui, -apple-system;
-  background: #1e1e2f;
-  color: #fff;
-  margin: 0;
-  padding: 8px;
+body{
+  font-family:system-ui,-apple-system;
+  background:#1e1e2f;
+  color:#fff;
+  margin:0;
+  padding:8px;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 8px;
-  font-size: 18px;
+h1{
+  text-align:center;
+  font-size:18px;
+  margin-bottom:6px;
 }
 
 /* ===== メインボタン ===== */
-.mainButtons {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.mainButtons{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
 
-button {
-  font-weight: bold;
-  border-radius: 10px;
-  border: none;
-  color: #000;
+button{
+  font-weight:bold;
+  border-radius:10px;
+  border:none;
+  color:#000;
 }
 
-.success {
-  background: #ff9933;
-  height: 72px;        /* 押しやすく */
+.success,.miss{
+  height:72px;
   font-size:18px;
 }
 
-.miss {
-  background: #66ccff;
-  height: 72px;
-  font-size:18px;
-}
+.success{background:#ff9933;}
+.miss{background:#66ccff;}
 
-.reset {
-  background: #ff6666;
-  height: 48px;
-  flex:1;
-}
+.reset{background:#ff6666;height:48px;flex:1;}
+.soundToggle{background:#66dd88;height:48px;width:90px;font-size:14px;}
+.csv{background:#b399ff;height:46px;width:100%;margin-top:6px;}
 
-.soundToggle {
-  background: #66dd88;
-  width:90px;
-  height:48px;
-  font-size:14px;
-}
-
-button:active { opacity:0.7; }
+button:active{opacity:0.7}
 
 /* ===== 入力欄 ===== */
-.inputSection {
-  border: 2px solid #fff;
-  border-radius: 10px;
-  padding: 8px;
-  margin: 8px 0;
+.inputSection{
+  border:2px solid #fff;
+  border-radius:10px;
+  padding:8px;
+  margin:6px 0;
 }
 
-.inputBox {
-  width: 100%;
-  height: 38px;
-  font-size: 18px;
-  text-align: right;
-  border-radius: 6px;
-  border: 2px solid #fff;
-  background: #1e1e2f;
-  color: #fff;
-  margin-bottom: 6px;
-
-  /* ★ ズレ解消の決定打 */
-  box-sizing: border-box;
+.inputBox{
+  width:100%;
+  height:38px;
+  font-size:18px;
+  text-align:right;
+  border-radius:6px;
+  border:2px solid #fff;
+  background:#1e1e2f;
+  color:#fff;
+  margin-bottom:6px;
+  box-sizing:border-box; /* ★ズレ防止 */
 }
 
 /* ===== テンキー ===== */
-.keypad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+.keypad{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
 }
 
-.keypad button {
-  height: 40px;
-  font-size: 16px;
-  background: #bbbbbb;
-  border-radius: 6px;
+.keypad button{
+  height:40px;
+  font-size:16px;
+  background:#bbb;
+  border-radius:6px;
 }
 
 /* ===== 結果 ===== */
-.footer {
-  background: #2b2b44;
-  padding: 10px;
-  border-radius: 8px;
-  text-align: center;
+.footer{
+  background:#2b2b44;
+  padding:8px;
+  border-radius:8px;
+  text-align:center;
 }
 
-.value { font-size:15px; }
-.rate { font-size:26px; font-weight:bold; }
-.ci { font-size:13px; color:#ffeeaa; }
+.value{font-size:14px}
+.rate{font-size:24px;font-weight:bold}
+.ci{font-size:12px;color:#ffeeaa}
 
-/* ===== メモ ===== */
-.memoSection {
-  border: 2px solid #fff;
-  border-radius: 10px;
-  padding: 6px;
-  margin-top: 8px;
-}
-
-.memoSection textarea {
-  width: 100%;
-  height: 60px;
-  font-size: 15px;
-  border: none;
-  background: #1e1e2f;
-  color: #fff;
-  resize: none;
-  box-sizing: border-box;
-}
-
-/* ===== リセット＋音 ===== */
-.resetSoundWrapper {
+/* ===== リセット+音 ===== */
+.resetSoundWrapper{
   display:flex;
   gap:6px;
-  margin:8px 0;
+  margin:6px 0;
+}
+
+/* ===== メモ ===== */
+.memoSection{
+  border:2px solid #fff;
+  border-radius:10px;
+  padding:6px;
+  margin-top:6px;
+}
+
+.memoSection textarea{
+  width:100%;
+  height:56px;
+  font-size:14px;
+  border:none;
+  background:#1e1e2f;
+  color:#fff;
+  resize:none;
+  box-sizing:border-box;
 }
 </style>
 </head>
@@ -147,7 +132,7 @@ button:active { opacity:0.7; }
 </div>
 
 <div class="inputSection">
-  <input id="inputValue" class="inputBox" type="text" placeholder="数値入力" readonly>
+  <input id="inputValue" class="inputBox" readonly placeholder="数値入力">
   <div class="keypad">
     <button onclick="addNum(1)">1</button>
     <button onclick="addNum(2)">2</button>
@@ -176,11 +161,14 @@ button:active { opacity:0.7; }
   <button class="soundToggle" onclick="toggleSound()">🔊 音ON</button>
 </div>
 
+<button class="csv" onclick="exportCSV()">CSV出力</button>
+
 <div class="memoSection">
-  <textarea id="memo" placeholder="メモ"></textarea>
+  <textarea id="memo" placeholder="メモ欄"></textarea>
 </div>
 
 <script>
+/* ===== 音 ===== */
 const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
 let soundOn=true;
 function playTone(f,d=0.1,v=0.25){
@@ -191,32 +179,56 @@ function playTone(f,d=0.1,v=0.25){
   o.connect(g); g.connect(audioCtx.destination);
   o.start(); o.stop(audioCtx.currentTime+d);
 }
-function playOK(){playTone(880,0.12,0.3);}
-function playNG(){playTone(440,0.12,0.25);}
+function ok(){playTone(880,0.12,0.3);}
+function ng(){playTone(440,0.12,0.25);}
 function toggleSound(){
   soundOn=!soundOn;
   document.querySelector(".soundToggle").textContent=soundOn?"🔊 音ON":"🔇 音OFF";
 }
 
-let success=0, miss=0;
-function getInputValue(){return Number(document.getElementById("inputValue").value)||1;}
+/* ===== ロジック ===== */
+let success=0,miss=0;
+function getVal(){return Number(inputValue.value)||1;}
 
 function update(){
   const t=success+miss;
-  document.getElementById("rate").textContent=t?(success/t*100).toFixed(1):"0.0";
-  if(!t){document.getElementById("ci").textContent="0.0 - 0.0";return;}
+  rate.textContent=t?(success/t*100).toFixed(1):"0.0";
+  if(!t){ci.textContent="0.0 - 0.0";return;}
   const p=success/t,se=Math.sqrt(p*(1-p)/t);
-  document.getElementById("ci").textContent=
+  ci.textContent=
     `${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;
 }
 
-function addSuccess(){playOK();success+=getInputValue();document.getElementById("success").textContent=success;update();clearNum();}
-function addMiss(){playNG();miss+=getInputValue();document.getElementById("miss").textContent=miss;update();clearNum();}
-function resetAll(){playNG();success=miss=0;document.getElementById("success").textContent=0;document.getElementById("miss").textContent=0;update();clearNum();document.getElementById("memo").value="";}
+function addSuccess(){ok();success+=getVal();successEl.textContent=success;update();clearNum();}
+function addMiss(){ng();miss+=getVal();missEl.textContent=miss;update();clearNum();}
+function resetAll(){ng();success=miss=0;successEl.textContent=0;missEl.textContent=0;update();clearNum();memo.value="";}
 
 function addNum(n){inputValue.value+=n;}
 function clearNum(){inputValue.value="";}
 function backspace(){inputValue.value=inputValue.value.slice(0,-1);}
+
+/* ===== CSV ===== */
+function exportCSV(){
+  const t=success+miss;
+  const r=t?(success/t*100).toFixed(1):"0.0";
+  let csv="成功,ミス,成功率(%)\n";
+  csv+=`${success},${miss},${r}\n\n`;
+  csv+=`メモ,"${memo.value.replace(/"/g,'""')}"\n`;
+  csv+=`出力日時,${new Date().toLocaleString()}\n`;
+  const blob=new Blob([csv],{type:"text/csv"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="成功率算出結果.csv";
+  a.click();
+}
+
+/* short refs */
+const inputValue=document.getElementById("inputValue");
+const successEl=document.getElementById("success");
+const missEl=document.getElementById("miss");
+const rate=document.getElementById("rate");
+const ci=document.getElementById("ci");
+const memo=document.getElementById("memo");
 </script>
 </body>
 </html>
