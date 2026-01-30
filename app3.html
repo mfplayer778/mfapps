@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>成功率算出君Ⅱ</title>
+<title>成功率算出君Ⅱ（音付き＋CSV）</title>
 
 <style>
 body{
@@ -15,40 +15,52 @@ body{
 }
 h1{text-align:center;margin-bottom:10px;font-size:20px}
 
+/* ===== グリッド ===== */
 .grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
 }
-
 .box{
   border:2px solid #fff;
   border-radius:10px;
   padding:8px;
 }
-
 .box h2{text-align:center;margin:0 0 6px;font-size:16px}
-
 .buttons{
   display:flex;
   flex-direction:column;
   gap:6px;
   margin-bottom:6px;
 }
-
 button{
   border:none;
   border-radius:8px;
   font-weight:bold;
+  color:#000;
 }
-
 .success,.miss{
   height:42px;
   font-size:15px;
 }
-
 .success{background:#ff9933}
 .miss{background:#66ccff}
+.reset{background:#ff6666;height:46px;font-size:16px;flex-grow:1;}
+.csv{
+  background:#b399ff;
+  width:100%;
+  height:44px;
+  font-size:15px;
+  border-radius:10px;
+  margin-top:10px; /* ここで上に余白追加 */
+}
+.soundToggle{
+  background:#66dd88;
+  height:46px;
+  font-size:14px;
+  border-radius:8px;
+  width:90px;
+}
 
 .footer{text-align:center}
 .value{font-size:14px}
@@ -63,7 +75,6 @@ button{
   text-align:center;
   background:#2b2b44;
 }
-
 .totalRate{font-size:26px;font-weight:bold}
 .totalCI{font-size:14px;color:#ffeeaa}
 
@@ -73,7 +84,6 @@ button{
   border-radius:10px;
   padding:6px;
 }
-
 textarea{
   width:100%;
   height:70px;
@@ -85,22 +95,18 @@ textarea{
   box-sizing:border-box;
 }
 
-.reset{
-  background:#ff6666;
-  width:100%;
+/* リセット＋音ON/OFF 横並び */
+.resetSoundWrapper{
+  display:flex;
+  gap:6px;
   margin-top:10px;
-  height:46px;
-  font-size:16px;
-  border-radius:10px;
+  flex-wrap:nowrap;
+  align-items:center;
 }
-
-.csv{
-  background:#66dd88;
-  width:100%;
-  margin-top:6px;
-  height:44px;
-  font-size:15px;
-  border-radius:10px;
+@media (max-width:400px){
+  .success,.miss,.reset,.csv,.soundToggle{height:42px;font-size:14px}
+  .rate{font-size:20px}
+  .ci{font-size:12px}
 }
 </style>
 </head>
@@ -112,6 +118,7 @@ textarea{
 
 <div class="totalBox">
   <div>ABCD 合計成功率</div>
+  <div class="value">成功: <span id="totalSuccess">0</span> / ミス: <span id="totalMiss">0</span></div>
   <div class="totalRate" id="totalRate">0.0%</div>
   <div class="totalCI" id="totalCI">0.0 - 0.0%</div>
 </div>
@@ -120,11 +127,35 @@ textarea{
   <textarea id="memo" placeholder="メモ欄"></textarea>
 </div>
 
-<!-- ★ リセット → CSV の順 -->
-<button class="reset" onclick="resetAll()">全リセット</button>
+<div class="resetSoundWrapper">
+  <button class="reset" onclick="resetAll()">全リセット</button>
+  <button class="soundToggle" onclick="toggleSound()">🔊 音ON</button>
+</div>
+
+<!-- CSVボタンに余白がついた -->
 <button class="csv" onclick="exportCSV()">CSV出力</button>
 
 <script>
+// ==== 音関係 ====
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let soundOn = true;
+function playTone(freq,duration=0.1,volume=0.25){
+  if(!soundOn) return;
+  const osc=audioCtx.createOscillator();
+  const gain=audioCtx.createGain();
+  osc.frequency.value=freq;
+  gain.gain.value=volume;
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(); osc.stop(audioCtx.currentTime+duration);
+}
+function playSuccessSound(){playTone(880,0.12,0.3);}
+function playMinusSound(){playTone(440,0.12,0.25);}
+function toggleSound(){
+  soundOn=!soundOn;
+  document.querySelector(".soundToggle").textContent = soundOn?"🔊 音ON":"🔇 音OFF";
+}
+
+// ==== データ初期化 ====
 const labels=["A","B","C","D"];
 const data={};
 const grid=document.getElementById("grid");
@@ -149,8 +180,10 @@ labels.forEach(l=>{
   data[l].el=box;
 });
 
+// ==== データ操作 ====
 function add(l,isS){
-  if(isS) data[l].s++; else data[l].m++;
+  if(isS){ data[l].s++; playSuccessSound(); }
+  else{ data[l].m++; playMinusSound(); }
   update(l); updateTotal();
 }
 
@@ -172,6 +205,8 @@ function updateTotal(){
   let s=0,m=0;
   labels.forEach(l=>{s+=data[l].s; m+=data[l].m;});
   const t=s+m;
+  document.getElementById("totalSuccess").textContent=s;
+  document.getElementById("totalMiss").textContent=m;
   const rate=t?((s/t)*100).toFixed(1):"0.0";
   document.getElementById("totalRate").textContent=`${rate}%`;
 
@@ -183,6 +218,7 @@ function updateTotal(){
   document.getElementById("totalCI").textContent=`${ci}%`;
 }
 
+// ==== CSV出力 ====
 function exportCSV(){
   let csv="区分,成功,ミス,成功率(%)\n";
   labels.forEach(l=>{
@@ -190,7 +226,6 @@ function exportCSV(){
     const r=t?((d.s/t)*100).toFixed(1):"0.0";
     csv+=`${l},${d.s},${d.m},${r}\n`;
   });
-
   let ts=0,tm=0;
   labels.forEach(l=>{ts+=data[l].s; tm+=data[l].m;});
   const tt=ts+tm;
@@ -206,6 +241,7 @@ function exportCSV(){
   a.click();
 }
 
+// ==== リセット ====
 function resetAll(){
   labels.forEach(l=>{data[l].s=0; data[l].m=0; update(l);});
   updateTotal();
