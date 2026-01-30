@@ -3,142 +3,183 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>成功率算出君Ⅱ（スマホ対応）</title>
+<title>成功率算出君Ⅱ</title>
+
 <style>
 body{
   font-family: system-ui, -apple-system;
   background:#1e1e2f;
   color:#fff;
   margin:0;
-  padding:12px;
+  padding:6px;
+  height:100vh;
+  box-sizing:border-box;
 }
-h1{text-align:center;margin-bottom:10px;font-size:20px}
 
+h1{
+  text-align:center;
+  font-size:18px;
+  margin:4px 0;
+}
+
+/* ===== グリッド ===== */
 .grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:10px;
+  gap:6px;
 }
 
 .box{
   border:2px solid #fff;
-  border-radius:10px;
-  padding:8px;
+  border-radius:8px;
+  padding:4px;
 }
 
-.box h2{text-align:center;margin:0 0 6px;font-size:16px}
+.box h2{
+  text-align:center;
+  margin:0 0 4px;
+  font-size:14px;
+}
 
 .buttons{
   display:flex;
   flex-direction:column;
-  gap:6px;
-  margin-bottom:6px;
+  gap:4px;
 }
 
 button{
   border:none;
   border-radius:8px;
   font-weight:bold;
-  color:#000;
 }
 
-.success,.miss{
-  height:50px;
-  font-size:16px;
-  width:100%;
+.success{
+  background:#ff9933;
+  height:32px;
+  font-size:13px;
 }
-.success{background:#ff9933}
-.miss{background:#66ccff}
 
+.miss{
+  background:#66ccff;
+  height:32px;
+  font-size:13px;
+}
+
+.footer{
+  text-align:center;
+}
+
+.value{font-size:12px}
+.rate{font-size:18px;font-weight:bold}
+.ci{font-size:11px;color:#ffeeaa}
+
+/* ===== 合計 ===== */
 .totalBox{
-  margin-top:10px;
+  margin-top:4px;
   border:2px solid #fff;
-  border-radius:10px;
-  padding:8px;
+  border-radius:8px;
+  padding:6px;
   text-align:center;
   background:#2b2b44;
 }
 
-.totalRate{font-size:26px;font-weight:bold}
-.totalCI{font-size:14px;color:#ffeeaa}
-.totalCount{font-size:16px;margin-top:4px}
+.totalRate{font-size:22px;font-weight:bold}
+.totalCI{font-size:12px;color:#ffeeaa}
 
+/* ===== リセット＋音 ===== */
+.resetSound{
+  display:flex;
+  gap:6px;
+  margin-top:4px;
+}
+
+.reset{
+  background:#ff6666;
+  flex:1;
+  height:38px;
+  font-size:14px;
+}
+
+.soundToggle{
+  background:#66dd88;
+  width:90px;
+  height:38px;
+  font-size:13px;
+}
+
+/* ===== CSV ===== */
+.csv{
+  margin-top:4px;
+  width:100%;
+  height:36px;
+  font-size:14px;
+  background:#cdaeff;
+  border-radius:8px;
+}
+
+/* ===== メモ ===== */
 .memoSection{
-  margin-top:10px;
+  margin-top:4px;
   border:2px solid #fff;
-  border-radius:10px;
-  padding:6px;
-  margin-bottom:12px; /* ここで下の余白を追加 */
+  border-radius:8px;
+  padding:4px;
 }
 
 textarea{
   width:100%;
-  height:70px;
+  height:48px;
   background:#1e1e2f;
   color:#fff;
   border:none;
-  resize:vertical;
-  padding:6px;
-  box-sizing:border-box;
-}
-
-.resetSoundWrapper{
-  display:flex;
-  gap:8px;
-  margin-bottom:6px;
-  flex-wrap:wrap;
-  align-items:center;
-}
-
-.csvWrapper{
-  margin-bottom:10px;
-}
-
-.reset{background:#ff6666; height:46px; font-size:16px; flex-grow:1;}
-.soundToggle{background:#66dd88; height:46px; font-size:14px; width:90px;}
-.csv{background:#cdaeff; height:44px; font-size:15px; width:100%; border-radius:8px;}
-
-button:active{opacity:0.7}
-
-.footer{text-align:center;margin-top:10px}
-.value{font-size:14px;margin:3px 0}
-.rate{font-size:22px;font-weight:bold;margin-top:4px}
-.ci{font-size:13px;color:#ffeeaa}
-
-@media (max-width: 400px){
-  .success,.miss,.reset,.csv,.soundToggle{height:50px;font-size:16px}
-  .rate{font-size:24px}
-  .ci{font-size:13px}
+  resize:none;
+  font-size:13px;
 }
 </style>
 </head>
 
 <body>
-<h1>成功率算出君Ⅱ（スマホ対応）</h1>
+<h1>成功率算出君Ⅱ</h1>
 
 <div class="grid" id="grid"></div>
 
 <div class="totalBox">
-  <div>ABCD 合計成功率</div>
+  <div>ABCD 合計</div>
+  <div>成功:<span id="ts">0</span> / ミス:<span id="tm">0</span></div>
   <div class="totalRate" id="totalRate">0.0%</div>
-  <div class="totalCount" id="totalCount">成功:0 / ミス:0</div>
   <div class="totalCI" id="totalCI">0.0 - 0.0%</div>
 </div>
 
-<div class="memoSection">
-  <textarea id="memo" placeholder="メモ欄"></textarea>
-</div>
-
-<div class="resetSoundWrapper">
-  <button class="reset" onclick="resetAll()">全リセット</button>
+<div class="resetSound">
+  <button class="reset" onclick="resetAll()">リセット</button>
   <button class="soundToggle" onclick="toggleSound()">🔊 音ON</button>
 </div>
 
-<div class="csvWrapper">
-  <button class="csv" onclick="exportCSV()">CSV出力</button>
+<button class="csv" onclick="exportCSV()">CSV出力</button>
+
+<div class="memoSection">
+  <textarea id="memo" placeholder="メモ"></textarea>
 </div>
 
 <script>
+/* ===== 音 ===== */
+const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+let soundOn=true;
+function playTone(f,d=0.1,v=0.25){
+  if(!soundOn)return;
+  const o=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+  o.frequency.value=f; g.gain.value=v;
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime+d);
+}
+function playOK(){playTone(880,0.12,0.3);}
+function playNG(){playTone(440,0.12,0.25);}
+function toggleSound(){
+  soundOn=!soundOn;
+  document.querySelector(".soundToggle").textContent=soundOn?"🔊 音ON":"🔇 音OFF";
+}
+
+/* ===== データ ===== */
 const labels=["A","B","C","D"];
 const data={};
 const grid=document.getElementById("grid");
@@ -150,87 +191,78 @@ labels.forEach(l=>{
   box.innerHTML=`
     <h2>${l}</h2>
     <div class="buttons">
-      <button class="success" onclick="add('${l}',true)">成功</button>
-      <button class="miss" onclick="add('${l}',false)">ミス</button>
+      <button class="success" onclick="add('${l}',1)">成功</button>
+      <button class="miss" onclick="add('${l}',0)">ミス</button>
     </div>
     <div class="footer">
-      <div class="value">成功:0 / ミス:0</div>
+      <div class="value">S:0 / M:0</div>
       <div class="rate">0.0%</div>
       <div class="ci">0.0 - 0.0%</div>
-    </div>
-  `;
+    </div>`;
   grid.appendChild(box);
   data[l].el=box;
 });
 
-const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-let soundOn=true;
-function playTone(freq,duration=0.1,volume=0.25){if(!soundOn)return; const osc=audioCtx.createOscillator(); const gain=audioCtx.createGain(); osc.frequency.value=freq; gain.gain.value=volume; osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime+duration);}
-function playSuccessSound(){playTone(880,0.12,0.3);}
-function playMinusSound(){playTone(440,0.12,0.25);}
-function toggleSound(){soundOn=!soundOn; document.querySelector(".soundToggle").textContent=soundOn?"🔊 音ON":"🔇 音OFF";}
-
 function add(l,isS){
-  if(isS){ data[l].s++; playSuccessSound(); }else{ data[l].m++; playMinusSound(); }
-  update(l);
-  updateTotal();
+  isS?(data[l].s++,playOK()):(data[l].m++,playNG());
+  update(l); updateTotal();
 }
 
 function update(l){
-  const d=data[l], t=d.s+d.m;
-  const rate=t?((d.s/t)*100).toFixed(1):"0.0";
+  const d=data[l],t=d.s+d.m;
+  const r=t?(d.s/t*100).toFixed(1):"0.0";
   let ci="0.0 - 0.0";
   if(t){
-    const p=d.s/t, se=Math.sqrt(p*(1-p)/t);
+    const p=d.s/t,se=Math.sqrt(p*(1-p)/t);
     ci=`${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;
   }
   const f=d.el.querySelector(".footer");
-  f.children[0].textContent=`成功:${d.s} / ミス:${d.m}`;
-  f.children[1].textContent=`${rate}%`;
+  f.children[0].textContent=`S:${d.s} / M:${d.m}`;
+  f.children[1].textContent=`${r}%`;
   f.children[2].textContent=`${ci}%`;
 }
 
 function updateTotal(){
   let s=0,m=0;
-  labels.forEach(l=>{s+=data[l].s; m+=data[l].m;});
+  labels.forEach(l=>{s+=data[l].s;m+=data[l].m;});
   const t=s+m;
-  const rate=t?((s/t)*100).toFixed(1):"0.0";
-  document.getElementById("totalRate").textContent=`${rate}%`;
-  document.getElementById("totalCount").textContent=`成功:${s} / ミス:${m}`;
-
+  const r=t?(s/t*100).toFixed(1):"0.0";
+  document.getElementById("ts").textContent=s;
+  document.getElementById("tm").textContent=m;
+  document.getElementById("totalRate").textContent=`${r}%`;
   let ci="0.0 - 0.0";
   if(t){
-    const p=s/t, se=Math.sqrt(p*(1-p)/t);
+    const p=s/t,se=Math.sqrt(p*(1-p)/t);
     ci=`${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;
   }
-  document.getElementById("totalCI").textContent=`${ci}%`;
+  document.getElementById("totalCI").textContent=ci;
 }
 
 function resetAll(){
-  labels.forEach(l=>{data[l].s=0; data[l].m=0; update(l);});
+  playNG();
+  labels.forEach(l=>{data[l].s=0;data[l].m=0;update(l);});
   updateTotal();
   document.getElementById("memo").value="";
-  playMinusSound();
 }
 
 function exportCSV(){
-  let csv="区分,成功,ミス,成功率(%)\n";
+  let csv="区分,成功,ミス,成功率\n";
   labels.forEach(l=>{
-    const d=data[l], t=d.s+d.m;
-    const r=t?((d.s/t)*100).toFixed(1):"0.0";
+    const d=data[l],t=d.s+d.m;
+    const r=t?(d.s/t*100).toFixed(1):"0.0";
     csv+=`${l},${d.s},${d.m},${r}\n`;
   });
-  let ts=0,tm=0;
-  labels.forEach(l=>{ts+=data[l].s; tm+=data[l].m;});
-  const tt=ts+tm;
-  const tr=tt?((ts/tt)*100).toFixed(1):"0.0";
-  csv+=`合計,${ts},${tm},${tr}\n\n`;
+  let s=0,m=0;
+  labels.forEach(l=>{s+=data[l].s;m+=data[l].m;});
+  const t=s+m;
+  const r=t?(s/t*100).toFixed(1):"0.0";
+  csv+=`合計,${s},${m},${r}\n\n`;
   csv+=`メモ,"${document.getElementById("memo").value.replace(/"/g,'""')}"\n`;
   csv+=`出力日時,${new Date().toLocaleString()}\n`;
   const blob=new Blob([csv],{type:"text/csv"});
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
-  a.download="成功率算出結果.csv";
+  a.download="成功率算出君Ⅱ.csv";
   a.click();
 }
 </script>
