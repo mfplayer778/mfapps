@@ -11,21 +11,18 @@ body{
   color:#fff;
   margin:0;
   padding:6px;
-  height:100vh;
   box-sizing:border-box;
 }
-
 h1{
   text-align:center;
   font-size:18px;
   margin:4px 0;
 }
-
-/* 説明文 */
 .description{
   text-align:center;
   font-size:13px;
-  margin-bottom:8px;
+  color:#fff;
+  margin-bottom:6px;
   line-height:1.4;
   white-space:pre-line;
 }
@@ -36,25 +33,21 @@ h1{
   grid-template-columns:1fr 1fr;
   gap:6px;
 }
-
 .box{
   border:2px solid #fff;
   border-radius:8px;
   padding:4px;
-  text-align:center; /* 中央揃え */
+  text-align:center;
 }
-
 .box h2{
   margin:0 0 4px;
   font-size:14px;
 }
-
 .buttons{
   display:flex;
   flex-direction:column;
   gap:4px;
 }
-
 button{
   border:none;
   border-radius:8px;
@@ -62,19 +55,17 @@ button{
   cursor:pointer;
 }
 
-/* 成功／ミスボタン */
-.success{
-  background:#ff9933;
-  height:48px;
-  font-size:14px;
-}
-.miss{
-  background:#66ccff;
-  height:48px;
-  font-size:14px;
-}
+/* 成功/ミスボタン */
+.success{background:#ff9933; height:48px; font-size:14px;}
+.miss{background:#66ccff; height:48px; font-size:14px;}
 
-/* 合計 */
+/* 個別計算結果 */
+.box .footer{margin-top:4px;}
+.box .value{font-size:12px;}
+.box .rate{font-size:18px;font-weight:bold;}
+.box .ci{font-size:11px;color:#ffeeaa;} /* ← 初代に合わせた */
+
+/* 合計表示 */
 .totalBox{
   margin-top:4px;
   border:2px solid #fff;
@@ -83,8 +74,8 @@ button{
   text-align:center;
   background:#2b2b44;
 }
-.totalRate{font-size:22px;font-weight:bold;}
-.totalCI{font-size:12px;color:#ffeeaa;}
+.totalRate{font-size:22px;font-weight:bold}
+.totalCI{font-size:12px;color:#ffeeaa}
 
 /* リセット＋音 */
 .resetSound{
@@ -92,29 +83,32 @@ button{
   gap:6px;
   margin-top:4px;
 }
-.reset{
-  background:#ff6666;
-  flex:1;
-  height:38px;
-  font-size:14px;
+.reset{background:#ff6666; flex:1; height:38px; font-size:14px;}
+.soundToggle{background:#66dd88; width:90px; height:38px; font-size:13px;}
+
+/* CSV & データ提供 */
+.csvSection{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-top:6px;
 }
-.soundToggle{
-  background:#66dd88;
-  width:90px;
-  height:38px;
-  font-size:13px;
+.csvBtn{
+  height:40px;
+  font-size:14px;
+  border-radius:8px;
+  border:none;
+  background:#b399ff;
+  color:#000;
+  padding:0 8px;
 }
 
-/* 任意入力 (オマケ) */
+/* 任意入力 */
 .optionalSection{
   background:#264653;
   border-radius:10px;
   padding:8px;
   margin-top:6px;
-}
-.optionalSection p{
-  font-size:13px;
-  margin-bottom:6px;
 }
 .formSection input{
   width:100%;
@@ -127,22 +121,6 @@ button{
   color:#fff;
   padding:4px;
   box-sizing:border-box;
-}
-
-/* CSV & データ提供ボタン */
-.csvSection{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  margin-top:6px;
-}
-.csvBtn{
-  height:46px;
-  font-size:14px;
-  border-radius:10px;
-  border:none;
-  color:#000;
-  padding:0 8px;
 }
 
 /* メモ欄 */
@@ -165,8 +143,8 @@ button{
 
 <h1>成功率算出君Ⅱ</h1>
 <div class="description">
-  成功/ミスをクリックすると成功率を自動計算します。
-  ABCD4体同時に成功率の計算が可能です。
+成功/ミスをクリックすると成功率を自動計算します。
+ABCD4体同時に成功率の計算が可能です。
 </div>
 
 <div class="grid" id="grid"></div>
@@ -183,23 +161,27 @@ button{
   <button class="soundToggle" onclick="toggleSound()">🔊 音ON</button>
 </div>
 
-<!-- オマケ任意入力 -->
+<!-- オマケ：プレイヤー情報 -->
 <div class="optionalSection">
-  <p>データ提供にご協力いただける場合は、以下を入力し、①CSVダウンロード → ②データ提供先のGoogleドライブへアップロードをお願いします。</p>
+  <p style="font-size:13px;">
+    データ提供にご協力いただける場合は以下を入力し、① CSVをダウンロード → ② データ提供先のGoogleドライブへアップロードをお願いします。
+  </p>
   <div class="formSection">
     <input id="playerName" placeholder="プレイヤー名 (任意)">
     <input id="userLevel" placeholder="術者レベル">
     <input id="targetLevel" placeholder="対象レベル">
     <input id="skillName" placeholder="技名(正式名称)">
   </div>
+
   <div class="csvSection">
-    <button class="csvBtn" style="background:#b399ff;" onclick="downloadCSV()">① CSVダウンロード</button>
+    <button class="csvBtn" onclick="downloadCSV()">① CSVダウンロード</button>
     <span style="align-self:center;font-size:16px;">→</span>
     <button class="csvBtn" style="background:#aa88ff;"
             onclick="window.open('https://drive.google.com/drive/folders/1tYpywXZoB33LoSDLk98yfL351-uwfmdf','_blank')">
       ② データ提供はコチラ（Googleドライブ）
     </button>
   </div>
+
   <div class="memoSection">
     <textarea id="memo" placeholder="メモ欄"></textarea>
   </div>
@@ -218,6 +200,7 @@ function toggleSound(){soundOn=!soundOn; document.querySelector(".soundToggle").
 const labels=["A","B","C","D"];
 const data={};
 const grid=document.getElementById("grid");
+
 labels.forEach(l=>{
   data[l]={s:0,m:0};
   const box=document.createElement("div");
@@ -232,25 +215,22 @@ labels.forEach(l=>{
       <div class="value">成功：0 ／ ミス：0</div>
       <div class="rate">0.0%</div>
       <div class="ci">0.0 - 0.0%</div>
-    </div>`;
+    </div>
+  `;
   grid.appendChild(box);
   data[l].el=box;
 });
 
 function add(l,isS){
   isS?(data[l].s++,playOK()):(data[l].m++,playNG());
-  update(l);
-  updateTotal();
+  update(l); updateTotal();
 }
 
 function update(l){
-  const d=data[l], t=d.s+d.m;
+  const d=data[l],t=d.s+d.m;
   const r=t?(d.s/t*100).toFixed(1):"0.0";
   let ci="0.0 - 0.0";
-  if(t){
-    const p=d.s/t, se=Math.sqrt(p*(1-p)/t);
-    ci=`${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;
-  }
+  if(t){const p=d.s/t,se=Math.sqrt(p*(1-p)/t); ci=`${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;}
   const f=d.el.querySelector(".footer");
   f.children[0].textContent=`成功：${d.s} ／ ミス：${d.m}`;
   f.children[1].textContent=`${r}%`;
@@ -266,16 +246,13 @@ function updateTotal(){
   document.getElementById("tm").textContent=m;
   document.getElementById("totalRate").textContent=`${r}%`;
   let ci="0.0 - 0.0";
-  if(t){
-    const p=s/t,se=Math.sqrt(p*(1-p)/t);
-    ci=`${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;
-  }
+  if(t){const p=s/t,se=Math.sqrt(p*(1-p)/t); ci=`${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;}
   document.getElementById("totalCI").textContent=ci;
 }
 
 function resetAll(){
   playNG();
-  labels.forEach(l=>{data[l].s=0;data[l].m=0;update(l);});
+  labels.forEach(l=>{data[l].s=0; data[l].m=0; update(l);});
   updateTotal();
   document.getElementById("memo").value="";
   document.getElementById("playerName").value="";
@@ -284,29 +261,30 @@ function resetAll(){
   document.getElementById("skillName").value="";
 }
 
-/* ===== CSVダウンロード（オマケ用） ===== */
+/* ===== CSVダウンロード（初代形式） ===== */
 function downloadCSV(){
   const playerName=document.getElementById("playerName").value;
   const userLevel=parseInt(document.getElementById("userLevel").value)||0;
   const targetLevel=parseInt(document.getElementById("targetLevel").value)||0;
   const skillName=document.getElementById("skillName").value;
   const levelDiff=userLevel-targetLevel;
-  const s = labels.reduce((sum,l)=>sum+data[l].s,0);
-  const m = labels.reduce((sum,l)=>sum+data[l].m,0);
-  const total = s+m;
-  const successRate = total>0?((s/total*100).toFixed(2))+"%":"0%";
-  const now = new Date().toLocaleString();
+  const memo=document.getElementById("memo").value;
+  let s=0,m=0;
+  labels.forEach(l=>{s+=data[l].s;m+=data[l].m;});
+  const total=s+m;
+  const successRate=total>0?((s/total*100).toFixed(2))+"%":"0%";
+  const now=new Date().toLocaleString();
 
   const csvData=[
     ["プレイヤー名","術者レベル","対象レベル","レベル差","成功","ミス","成功率","技名(正式名称)","メモ","出力日時"],
-    [playerName,userLevel,targetLevel,levelDiff,s,m,successRate,skillName,document.getElementById("memo").value,now]
+    [playerName,userLevel,targetLevel,levelDiff,s,m,successRate,skillName,memo,now]
   ];
 
-  const csvContent = csvData.map(e=>e.join(",")).join("\n");
-  const blob = new Blob([csvContent],{type:"text/csv"});
+  const csvContent=csvData.map(e=>e.join(",")).join("\n");
+  const blob=new Blob([csvContent],{type:"text/csv"});
   const a=document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "成功率算出君Ⅱ.csv";
+  a.href=URL.createObjectURL(blob);
+  a.download="成功率算出結果.csv";
   a.click();
 }
 </script>
