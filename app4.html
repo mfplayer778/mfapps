@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>回復量測定君</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system;
+  background: #1e1e2f;
+  color: #fff;
+  margin: 0;
+  padding: 16px;
+}
+
+h1 {
+  text-align: center;
+  margin: 0 0 16px 0;
+  font-size: 24px;
+}
+
+.panel {
+  background: #2b2b44;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  opacity: 0.9;
+}
+
+textarea {
+  width: 100%;
+  background: #1e1e2f;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 16px;
+  resize: none;
+}
+
+/* プレースホルダー色 */
+textarea::placeholder {
+  color: #aaa;
+}
+
+#magic {
+  height: 44px;
+}
+
+#values {
+  height: 120px;
+  resize: vertical;
+}
+
+.resultLabel {
+  margin-bottom: 6px;
+  opacity: 0.9;
+}
+
+.resultValue {
+  text-align: center;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #fff; /* 白色で表示 */
+}
+
+.error {
+  color: #ff6666;
+  font-weight: bold;
+}
+
+button {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background: #ff6666;
+  color: #000;
+}
+
+button:active {
+  opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<h1>回復量測定君</h1>
+
+<div class="panel">
+  <label>魔回</label>
+  <textarea id="magic" placeholder="1000"></textarea>
+</div>
+
+<div class="panel">
+  <label>ヒールの数値（縦に連続入力）</label>
+  <textarea id="values" placeholder="400
+440
+309
+420
+410
+430"></textarea>
+</div>
+
+<div class="panel">
+  <div class="resultLabel">計算結果</div>
+  <div class="resultValue" id="resultText">-</div>
+</div>
+
+<button onclick="resetAll()">リセット</button>
+
+<script>
+function calculate() {
+  const magicText = document.getElementById("magic").value.trim();
+  const magic = parseFloat(magicText);
+  const text = document.getElementById("values").value.trim();
+  const result = document.getElementById("resultText");
+
+  if (!magicText || isNaN(magic) || magic <= 0 || !text) {
+    result.textContent = "-";
+    result.classList.remove("error");
+    return;
+  }
+
+  const nums = text
+    .split(/\n+/)
+    .map(v => parseFloat(v))
+    .filter(v => !isNaN(v));
+
+  if (nums.length === 0) {
+    result.textContent = "-";
+    result.classList.remove("error");
+    return;
+  }
+
+  const min = Math.min(...nums);
+  const max = Math.max(...nums);
+
+  const A = max / (magic * 0.4 * 1.2) * 100;
+  const B = min / (magic * 0.4 * 0.8) * 100;
+
+  if (A > B) {
+    result.textContent = "入力内容を確認してください";
+    result.classList.add("error");
+    return;
+  }
+
+  result.textContent = `このモンスターの回復量は・・・${A.toFixed(2)}p～${B.toFixed(2)}pです`;
+  result.classList.remove("error");
+}
+
+function resetAll() {
+  document.getElementById("magic").value = "";
+  document.getElementById("values").value = "";
+  const result = document.getElementById("resultText");
+  result.textContent = "-";
+  result.classList.remove("error");
+}
+
+document.getElementById("magic").addEventListener("input", calculate);
+document.getElementById("values").addEventListener("input", calculate);
+</script>
+
+</body>
+</html>
