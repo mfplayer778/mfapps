@@ -25,8 +25,6 @@ h1{
   line-height:1.4;
   white-space:pre-line;
 }
-
-/* ===== グリッド ===== */
 .grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -38,29 +36,15 @@ h1{
   padding:4px;
   text-align:center;
 }
-.box h2{
-  margin:0 0 4px;
-  font-size:14px;
-}
-.buttons{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-button{
-  border:none;
-  border-radius:8px;
-  font-weight:bold;
-  cursor:pointer;
-}
+.box h2{margin:0 0 4px;font-size:14px;}
+.buttons{display:flex;flex-direction:column;gap:4px;}
+button{border:none;border-radius:8px;font-weight:bold;cursor:pointer;}
 .success{background:#ff9933;height:48px;font-size:14px;}
 .miss{background:#66ccff;height:48px;font-size:14px;}
 .box .footer{margin-top:4px;}
 .box .value{font-size:12px;}
 .box .rate{font-size:18px;font-weight:bold;}
 .box .ci{font-size:11px;color:#ffeeaa;}
-
-/* 合計 */
 .totalBox{
   margin-top:4px;
   border:2px solid #fff;
@@ -71,17 +55,9 @@ button{
 }
 .totalRate{font-size:22px;font-weight:bold}
 .totalCI{font-size:12px;color:#ffeeaa}
-
-/* リセット＋音 */
-.resetSound{
-  display:flex;
-  gap:6px;
-  margin-top:4px;
-}
+.resetSound{display:flex;gap:6px;margin-top:4px;}
 .reset{background:#ff6666;flex:1;height:38px;font-size:14px;}
 .soundToggle{background:#66dd88;width:90px;height:38px;font-size:13px;}
-
-/* 任意入力 */
 .optionalSection{
   background:#264653;
   border-radius:10px;
@@ -100,15 +76,11 @@ button{
   padding:4px;
   box-sizing:border-box;
 }
-
-/* 対象レベル 横並び */
 .targetRow{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:6px;
 }
-
-/* CSV */
 .csvSection{
   display:flex;
   align-items:center;
@@ -124,8 +96,6 @@ button{
   color:#000;
   padding:0 8px;
 }
-
-/* メモ */
 .memoSection{
   margin-top:6px;
 }
@@ -236,18 +206,28 @@ labels.forEach(l=>{
   data[l].el=box;
 });
 
-function add(l,s){
-  s?(data[l].s++,playOK()):(data[l].m++,playNG());
+// Wilsonスコア法でCI計算
+function wilsonCI(s,t,z=1.96){
+  if(t===0) return [0,0];
+  const phat = (s + 0.5*z*z) / (t + z*z);
+  const margin = z / (t + z*z) * Math.sqrt(s*t/t + 0.25*z*z);
+  const lower = Math.max(0, phat - margin);
+  const upper = Math.min(1, phat + margin);
+  return [lower, upper];
+}
+
+function add(l,succ){
+  succ ? (data[l].s++,playOK()) : (data[l].m++,playNG());
   update(l); updateTotal();
 }
 
 function update(l){
   const d=data[l],t=d.s+d.m;
-  const r=t?(d.s/t*100).toFixed(1):"0.0";
-  let ci="0.0 - 0.0";
+  const r = t ? (d.s/t*100).toFixed(1) : "0.0";
+  let ci = "0.0 - 0.0";
   if(t){
-    const p=d.s/t,se=Math.sqrt(p*(1-p)/t);
-    ci=`${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;
+    const [low,high] = wilsonCI(d.s,t);
+    ci = `${(low*100).toFixed(1)} - ${(high*100).toFixed(1)}`;
   }
   const f=d.el.querySelector(".footer");
   f.children[0].textContent=`成功：${d.s} ／ ミス：${d.m}`;
@@ -257,11 +237,22 @@ function update(l){
 
 function updateTotal(){
   let s=0,m=0;
-  labels.forEach(l=>{s+=data[l].s;m+=data[l].m;});
-  const t=s+m;
-  document.getElementById("ts").textContent=s;
-  document.getElementById("tm").textContent=m;
-  document.getElementById("totalRate").textContent=t?(s/t*100).toFixed(1)+"%":"0.0%";
+  labels.forEach(l=>{s+=data[l].s; m+=data[l].m;});
+  const t = s+m;
+  document.getElementById("ts").textContent = s;
+  document.getElementById("tm").textContent = m;
+
+  const rateElem = document.getElementById("totalRate");
+  const ciElem = document.getElementById("totalCI");
+
+  if(t){
+    const [low,high] = wilsonCI(s,t);
+    rateElem.textContent = (s/t*100).toFixed(1) + "%";
+    ciElem.textContent = `${(low*100).toFixed(1)} - ${(high*100).toFixed(1)}%`;
+  } else {
+    rateElem.textContent = "0.0%";
+    ciElem.textContent = "0.0 - 0.0%";
+  }
 }
 
 function resetAll(){
@@ -299,4 +290,3 @@ function downloadCSV(){
 
 </body>
 </html>
-
