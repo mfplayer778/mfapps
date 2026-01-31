@@ -21,7 +21,6 @@ h1{
 .description{
   text-align:center;
   font-size:13px;
-  color:#fff;
   margin-bottom:6px;
   line-height:1.4;
   white-space:pre-line;
@@ -54,18 +53,14 @@ button{
   font-weight:bold;
   cursor:pointer;
 }
-
-/* 成功/ミスボタン */
-.success{background:#ff9933; height:48px; font-size:14px;}
-.miss{background:#66ccff; height:48px; font-size:14px;}
-
-/* 個別計算結果 */
+.success{background:#ff9933;height:48px;font-size:14px;}
+.miss{background:#66ccff;height:48px;font-size:14px;}
 .box .footer{margin-top:4px;}
 .box .value{font-size:12px;}
 .box .rate{font-size:18px;font-weight:bold;}
-.box .ci{font-size:11px;color:#ffeeaa;} /* ← 初代に合わせた */
+.box .ci{font-size:11px;color:#ffeeaa;}
 
-/* 合計表示 */
+/* 合計 */
 .totalBox{
   margin-top:4px;
   border:2px solid #fff;
@@ -83,10 +78,37 @@ button{
   gap:6px;
   margin-top:4px;
 }
-.reset{background:#ff6666; flex:1; height:38px; font-size:14px;}
-.soundToggle{background:#66dd88; width:90px; height:38px; font-size:13px;}
+.reset{background:#ff6666;flex:1;height:38px;font-size:14px;}
+.soundToggle{background:#66dd88;width:90px;height:38px;font-size:13px;}
 
-/* CSV & データ提供 */
+/* 任意入力 */
+.optionalSection{
+  background:#264653;
+  border-radius:10px;
+  padding:8px;
+  margin-top:6px;
+}
+.formSection input{
+  width:100%;
+  height:36px;
+  font-size:15px;
+  margin-bottom:6px;
+  border-radius:6px;
+  border:2px solid #fff;
+  background:#1e1e2f;
+  color:#fff;
+  padding:4px;
+  box-sizing:border-box;
+}
+
+/* 対象レベル 横並び */
+.targetRow{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+}
+
+/* CSV */
 .csvSection{
   display:flex;
   align-items:center;
@@ -103,27 +125,7 @@ button{
   padding:0 8px;
 }
 
-/* 任意入力 */
-.optionalSection{
-  background:#264653;
-  border-radius:10px;
-  padding:8px;
-  margin-top:6px;
-}
-.formSection input{
-  width:100%;
-  height:38px;
-  font-size:16px;
-  margin-bottom:6px;
-  border-radius:6px;
-  border:2px solid #fff;
-  background:#1e1e2f;
-  color:#fff;
-  padding:4px;
-  box-sizing:border-box;
-}
-
-/* メモ欄 */
+/* メモ */
 .memoSection{
   margin-top:6px;
 }
@@ -135,7 +137,6 @@ button{
   background:#1e1e2f;
   color:#fff;
   resize:none;
-  box-sizing:border-box;
 }
 </style>
 </head>
@@ -161,24 +162,31 @@ ABCD4体同時に成功率の計算が可能です。
   <button class="soundToggle" onclick="toggleSound()">🔊 音ON</button>
 </div>
 
-<!-- オマケ：プレイヤー情報 -->
 <div class="optionalSection">
   <p style="font-size:13px;">
     データ提供にご協力いただける場合は以下を入力し、① CSVをダウンロード → ② データ提供先のGoogleドライブへアップロードをお願いします。
   </p>
+
   <div class="formSection">
     <input id="playerName" placeholder="プレイヤー名 (任意)">
     <input id="userLevel" placeholder="術者レベル">
-    <input id="targetLevel" placeholder="対象レベル">
+
+    <div class="targetRow">
+      <input id="targetA" placeholder="A 対象Lv">
+      <input id="targetB" placeholder="B 対象Lv">
+      <input id="targetC" placeholder="C 対象Lv">
+      <input id="targetD" placeholder="D 対象Lv">
+    </div>
+
     <input id="skillName" placeholder="技名(正式名称)">
   </div>
 
   <div class="csvSection">
     <button class="csvBtn" onclick="downloadCSV()">① CSVダウンロード</button>
-    <span style="align-self:center;font-size:16px;">→</span>
+    <span style="font-size:16px;">→</span>
     <button class="csvBtn" style="background:#aa88ff;"
-            onclick="window.open('https://drive.google.com/drive/folders/1tYpywXZoB33LoSDLk98yfL351-uwfmdf','_blank')">
-      ② データ提供はコチラ（Googleドライブ）
+      onclick="window.open('https://drive.google.com/drive/folders/1tYpywXZoB33LoSDLk98yfL351-uwfmdf','_blank')">
+      ② データ提供はコチラ（Googleドライブが開きます）
     </button>
   </div>
 
@@ -188,15 +196,23 @@ ABCD4体同時に成功率の計算が可能です。
 </div>
 
 <script>
-/* ===== 音 ===== */
 const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
 let soundOn=true;
-function playTone(f,d=0.1,v=0.25){if(!soundOn)return; const o=audioCtx.createOscillator(); const g=audioCtx.createGain(); o.frequency.value=f; g.gain.value=v; o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+d);}
-function playOK(){playTone(880,0.12,0.3);}
-function playNG(){playTone(440,0.12,0.25);}
-function toggleSound(){soundOn=!soundOn; document.querySelector(".soundToggle").textContent=soundOn?"🔊 音ON":"🔇 音OFF";}
+function playTone(f,d=0.1,v=0.25){
+  if(!soundOn)return;
+  const o=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+  o.frequency.value=f; g.gain.value=v;
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime+d);
+}
+function playOK(){playTone(880);}
+function playNG(){playTone(440);}
+function toggleSound(){
+  soundOn=!soundOn;
+  document.querySelector(".soundToggle").textContent=soundOn?"🔊 音ON":"🔇 音OFF";
+}
 
-/* ===== ABCDデータ ===== */
 const labels=["A","B","C","D"];
 const data={};
 const grid=document.getElementById("grid");
@@ -215,14 +231,13 @@ labels.forEach(l=>{
       <div class="value">成功：0 ／ ミス：0</div>
       <div class="rate">0.0%</div>
       <div class="ci">0.0 - 0.0%</div>
-    </div>
-  `;
+    </div>`;
   grid.appendChild(box);
   data[l].el=box;
 });
 
-function add(l,isS){
-  isS?(data[l].s++,playOK()):(data[l].m++,playNG());
+function add(l,s){
+  s?(data[l].s++,playOK()):(data[l].m++,playNG());
   update(l); updateTotal();
 }
 
@@ -230,7 +245,10 @@ function update(l){
   const d=data[l],t=d.s+d.m;
   const r=t?(d.s/t*100).toFixed(1):"0.0";
   let ci="0.0 - 0.0";
-  if(t){const p=d.s/t,se=Math.sqrt(p*(1-p)/t); ci=`${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;}
+  if(t){
+    const p=d.s/t,se=Math.sqrt(p*(1-p)/t);
+    ci=`${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;
+  }
   const f=d.el.querySelector(".footer");
   f.children[0].textContent=`成功：${d.s} ／ ミス：${d.m}`;
   f.children[1].textContent=`${r}%`;
@@ -241,50 +259,40 @@ function updateTotal(){
   let s=0,m=0;
   labels.forEach(l=>{s+=data[l].s;m+=data[l].m;});
   const t=s+m;
-  const r=t?(s/t*100).toFixed(1):"0.0";
   document.getElementById("ts").textContent=s;
   document.getElementById("tm").textContent=m;
-  document.getElementById("totalRate").textContent=`${r}%`;
-  let ci="0.0 - 0.0";
-  if(t){const p=s/t,se=Math.sqrt(p*(1-p)/t); ci=`${Math.max(0,(p-1.96*se)*100).toFixed(1)} - ${Math.min(100,(p+1.96*se)*100).toFixed(1)}`;}
-  document.getElementById("totalCI").textContent=ci;
+  document.getElementById("totalRate").textContent=t?(s/t*100).toFixed(1)+"%":"0.0%";
 }
 
 function resetAll(){
   playNG();
-  labels.forEach(l=>{data[l].s=0; data[l].m=0; update(l);});
+  labels.forEach(l=>{data[l].s=0;data[l].m=0;update(l);});
   updateTotal();
-  document.getElementById("memo").value="";
-  document.getElementById("playerName").value="";
-  document.getElementById("userLevel").value="";
-  document.getElementById("targetLevel").value="";
-  document.getElementById("skillName").value="";
+  ["playerName","userLevel","targetA","targetB","targetC","targetD","skillName","memo"]
+    .forEach(id=>document.getElementById(id).value="");
 }
 
-/* ===== CSVダウンロード（初代形式） ===== */
 function downloadCSV(){
-  const playerName=document.getElementById("playerName").value;
-  const userLevel=parseInt(document.getElementById("userLevel").value)||0;
-  const targetLevel=parseInt(document.getElementById("targetLevel").value)||0;
-  const skillName=document.getElementById("skillName").value;
-  const levelDiff=userLevel-targetLevel;
+  const name=document.getElementById("playerName").value;
+  const userLv=parseInt(document.getElementById("userLevel").value)||0;
+  const skill=document.getElementById("skillName").value;
   const memo=document.getElementById("memo").value;
-  let s=0,m=0;
-  labels.forEach(l=>{s+=data[l].s;m+=data[l].m;});
-  const total=s+m;
-  const successRate=total>0?((s/total*100).toFixed(2))+"%":"0%";
   const now=new Date().toLocaleString();
 
-  const csvData=[
-    ["プレイヤー名","術者レベル","対象レベル","レベル差","成功","ミス","成功率","技名(正式名称)","メモ","出力日時"],
-    [playerName,userLevel,targetLevel,levelDiff,s,m,successRate,skillName,memo,now]
-  ];
+  const rows=[["プレイヤー名","術者Lv","対象Lv","レベル差","成功","ミス","成功率","技名","メモ","区分","出力日時"]];
 
-  const csvContent=csvData.map(e=>e.join(",")).join("\n");
-  const blob=new Blob([csvContent],{type:"text/csv"});
+  labels.forEach(l=>{
+    const d=data[l],t=d.s+d.m;
+    const target=parseInt(document.getElementById("target"+l).value)||0;
+    const rate=t?((d.s/t*100).toFixed(2))+"%":"0%";
+    rows.push([name,userLv,target,userLv-target,d.s,d.m,rate,skill,memo,l,now]);
+  });
+
+  const csv=rows.map(r=>r.join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv"});
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
-  a.download="成功率算出結果.csv";
+  a.download="成功率算出結果_ABCD別.csv";
   a.click();
 }
 </script>
