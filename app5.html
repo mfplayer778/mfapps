@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>レベル技判定ツール</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  font-family: system-ui, -apple-system;
+  background: #1e1e2f;
+  color: #fff;
+  margin: 0;
+  padding: 16px;
+}
+
+h1, h2 {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.panel {
+  background: #2b2b44;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background: #2b2b44;
+  font-size: 12px;
+}
+
+th, td {
+  border: 1px solid #555;
+  padding: 4px 6px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+th {
+  background: #3a3a5a;
+}
+
+input.lvInput {
+  width: 70px;
+  background: #1e1e2f;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px;
+  text-align: center;
+}
+
+.hitText {
+  color: #ff4444;
+  font-weight: bold;
+}
+
+.missText {
+  color: #66ccff;
+}
+
+.waitText {
+  color: #aaa;
+}
+
+th label {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.note {
+  margin-top: 4px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #ccc;
+  text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<h1>レベル技判定ツール</h1>
+
+<!-- 任意入力表 -->
+<div class="panel">
+  <table>
+    <tr>
+      <th>LV</th>
+      <th>Lv2ポイズン</th>
+      <th>Lv3シールスキル</th>
+      <th>Lv4フリーズオール</th>
+      <th>Lv5クォーター</th>
+      <th>Lv7フレアー</th>
+    </tr>
+    <tbody id="inputTable"></tbody>
+  </table>
+</div>
+
+<h2>レベル技対応表（Lv400～800）</h2>
+<div class="note">
+  各技のボックスにチェックを入れると回避レベルのみ表示できます。
+</div>
+
+<table id="skillTable">
+  <tr>
+    <th>LV</th>
+    <th><label><input type="checkbox" data-mod="2">Lv2ポイズン</label></th>
+    <th><label><input type="checkbox" data-mod="3">Lv3シールスキル</label></th>
+    <th><label><input type="checkbox" data-mod="4">Lv4フリーズオール</label></th>
+    <th><label><input type="checkbox" data-mod="5">Lv5クォーター</label></th>
+    <th><label><input type="checkbox" data-mod="7">Lv7フレアー</label></th>
+  </tr>
+</table>
+
+<script>
+const skills = [
+  { mod: 2, text: "毒" },
+  { mod: 3, text: "技封印" },
+  { mod: 4, text: "凍結" },
+  { mod: 5, text: "クォーター" },
+  { mod: 7, text: "フレアー" }
+];
+
+/* 任意入力表 初期生成（4行固定） */
+function createInputTable() {
+  const tb = document.getElementById("inputTable");
+  tb.innerHTML = "";
+
+  for (let i = 0; i < 4; i++) {
+    let row = `<tr>
+      <td><input class="lvInput" type="number" min="0" max="999"></td>`;
+
+    skills.forEach(() => {
+      row += `<td class="waitText">判定中</td>`;
+    });
+
+    row += `</tr>`;
+    tb.innerHTML += row;
+  }
+
+  document.querySelectorAll(".lvInput").forEach(input => {
+    input.addEventListener("input", updateInputTable);
+  });
+}
+
+/* 任意入力判定 */
+function updateInputTable() {
+  document.querySelectorAll("#inputTable tr").forEach(tr => {
+    const input = tr.querySelector("input");
+    const v = Number(input.value);
+    const tds = tr.querySelectorAll("td");
+
+    skills.forEach((s, i) => {
+      const cell = tds[i + 1];
+      if (!input.value) {
+        cell.textContent = "判定中";
+        cell.className = "waitText";
+      } else if (v % s.mod === 0) {
+        cell.textContent = s.text;
+        cell.className = "hitText";
+      } else {
+        cell.textContent = "ミス";
+        cell.className = "missText";
+      }
+    });
+  });
+}
+
+/* 下表生成 */
+function createMainTable() {
+  const table = document.getElementById("skillTable");
+  for (let lv = 400; lv <= 800; lv++) {
+    const tr = document.createElement("tr");
+    tr.dataset.lv = lv;
+
+    tr.innerHTML =
+      `<td>${lv}</td>` +
+      skills.map(s =>
+        lv % s.mod === 0
+          ? `<td class="hitText">${s.text}</td>`
+          : `<td class="missText">ミス</td>`
+      ).join("");
+
+    table.appendChild(tr);
+  }
+}
+
+/* フィルタ：チェックON → 発動レベルを除外 */
+function applyFilter() {
+  const rules = [...document.querySelectorAll("th input")];
+
+  document.querySelectorAll("#skillTable tr").forEach((tr, i) => {
+    if (i === 0) return;
+    const lv = Number(tr.dataset.lv);
+
+    const show = rules.every(r =>
+      !r.checked || lv % Number(r.dataset.mod) !== 0
+    );
+
+    tr.style.display = show ? "" : "none";
+  });
+}
+
+document.querySelectorAll("th input")
+  .forEach(c => c.addEventListener("change", applyFilter));
+
+createInputTable();
+createMainTable();
+</script>
+
+</body>
+</html>
