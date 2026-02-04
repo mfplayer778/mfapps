@@ -6,9 +6,7 @@
 <title>回復量測定君</title>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   font-family: system-ui, -apple-system;
@@ -49,35 +47,21 @@ textarea {
 }
 
 /* プレースホルダー色 */
-textarea::placeholder {
-  color: #aaa;
-}
+textarea::placeholder { color: #aaa; }
 
-#magic {
-  height: 44px;
-}
+#magic { height: 44px; }
+#values { height: 120px; resize: vertical; }
 
-#values {
-  height: 120px;
-  resize: vertical;
-}
-
-.resultLabel {
-  margin-bottom: 6px;
-  opacity: 0.9;
-}
+.resultLabel { margin-bottom: 6px; opacity: 0.9; }
 
 .resultValue {
   text-align: center;
   font-size: 20px;
   line-height: 1.4;
-  color: #fff; /* 白色で表示 */
+  color: #fff;
 }
 
-.error {
-  color: #ff6666;
-  font-weight: bold;
-}
+.error { color: #ff6666; font-weight: bold; }
 
 button {
   width: 100%;
@@ -89,9 +73,7 @@ button {
   color: #000;
 }
 
-button:active {
-  opacity: 0.7;
-}
+button:active { opacity: 0.7; }
 </style>
 </head>
 
@@ -107,11 +89,10 @@ button:active {
 <div class="panel">
   <label>ヒールの数値（縦に連続入力）</label>
   <textarea id="values" placeholder="400
-440
+400
 309
-420
-410
-430"></textarea>
+415
+450"></textarea>
 </div>
 
 <div class="panel">
@@ -134,30 +115,31 @@ function calculate() {
     return;
   }
 
-  const nums = text
+  // 入力値を配列にする
+  const rawNums = text
     .split(/\n+/)
     .map(v => parseFloat(v))
     .filter(v => !isNaN(v));
 
-  if (nums.length === 0) {
+  if (rawNums.length === 0) {
     result.textContent = "-";
     result.classList.remove("error");
     return;
   }
 
-  const min = Math.min(...nums);
-  const max = Math.max(...nums);
+  // 絶対値で計算
+  const absNums = rawNums.map(v => Math.abs(v));
+  const minAbs = Math.min(...absNums);
+  const maxAbs = Math.max(...absNums);
 
-  const A = max / (magic * 0.4 * 1.2) * 100;
-  const B = min / (magic * 0.4 * 0.8) * 100;
+  // 元の符号を保持して計算結果に反映
+  const minSign = rawNums[absNums.indexOf(minAbs)] < 0 ? -1 : 1;
+  const maxSign = rawNums[absNums.indexOf(maxAbs)] < 0 ? -1 : 1;
 
-  if (A > B) {
-    result.textContent = "入力内容を確認してください";
-    result.classList.add("error");
-    return;
-  }
+  const A = maxSign * (maxAbs / (magic * 0.4 * 1.2) * 100);
+  const B = minSign * (minAbs / (magic * 0.4 * 0.8) * 100);
 
-  result.textContent = `このモンスターの回復量は・・・${A.toFixed(2)}p～${B.toFixed(2)}pです`;
+  result.textContent = `このモンスターの回復量は・・・${B.toFixed(2)}p～${A.toFixed(2)}pです`;
   result.classList.remove("error");
 }
 
