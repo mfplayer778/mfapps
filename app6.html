@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>指数計算君</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  font-family: system-ui, -apple-system;
+  background: #1e1e2f;
+  color: #fff;
+  margin: 0;
+  padding: 12px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+/* パネル */
+.panel {
+  background: #2b2b44;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* 表タイトル */
+.table-title {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+/* テーブル */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 11px;
+  table-layout: fixed;
+  margin-bottom: 12px;
+}
+
+td {
+  border: 1px solid #555;
+  padding: 4px;
+  text-align: center;
+  word-wrap: break-word;
+  min-height: 32px; /* 高さ統一 */
+  vertical-align: middle;
+}
+
+/* 入力欄 */
+input.statInput, input.lvInput {
+  width: 100%;
+  max-width: 60px;
+  background: #1e1e2f;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px;
+  text-align: center;
+  font-size: 12px;
+  -moz-appearance: textfield;
+}
+
+input.statInput::-webkit-outer-spin-button,
+input.statInput::-webkit-inner-spin-button,
+input.lvInput::-webkit-outer-spin-button,
+input.lvInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* 結果表示 */
+.result {
+  color: #66ccff;
+  font-weight: bold;
+}
+
+/* スマホ対応 */
+@media (max-width: 480px) {
+  table { font-size: 10px; }
+  input.statInput, input.lvInput { padding: 2px; font-size: 10px; }
+  td { min-height: 28px; }
+}
+</style>
+</head>
+
+<body>
+
+<h1>指数計算君</h1>
+
+<!-- ステータス入力表 -->
+<div class="panel">
+  <div class="table-title">ステータス</div>
+  <table>
+    <tbody id="statTable"></tbody>
+  </table>
+</div>
+
+<!-- 指数計算結果表 -->
+<div class="panel">
+  <div class="table-title">指数計算結果</div>
+  <table>
+    <tbody id="resultTable"></tbody>
+  </table>
+</div>
+
+<script>
+const stats = ["HP","攻撃","敏捷","魔回","SP","防御","魔攻","魔防"];
+
+/* ステータス入力表生成 */
+function createStatTable() {
+  const tbody = document.getElementById("statTable");
+  tbody.innerHTML = "";
+
+  // ステータス行
+  for (let i = 0; i < 4; i++) {
+    const tr = document.createElement("tr");
+
+    // 左列
+    let tdName = document.createElement("td");
+    tdName.textContent = stats[i];
+    tr.appendChild(tdName);
+
+    let tdInput = document.createElement("td");
+    const inputLeft = document.createElement("input");
+    inputLeft.type = "number";
+    inputLeft.min = 0;
+    inputLeft.placeholder = "数値入力";
+    inputLeft.value = "";
+    inputLeft.className = "statInput";
+    inputLeft.dataset.index = i;
+    inputLeft.addEventListener("input", updateResults);
+    tdInput.appendChild(inputLeft);
+    tr.appendChild(tdInput);
+
+    // 右列
+    tdName = document.createElement("td");
+    tdName.textContent = stats[i+4];
+    tr.appendChild(tdName);
+
+    tdInput = document.createElement("td");
+    const inputRight = document.createElement("input");
+    inputRight.type = "number";
+    inputRight.min = 0;
+    inputRight.placeholder = "数値入力";
+    inputRight.value = "";
+    inputRight.className = "statInput";
+    inputRight.dataset.index = i+4;
+    inputRight.addEventListener("input", updateResults);
+    tdInput.appendChild(inputRight);
+    tr.appendChild(tdInput);
+
+    tbody.appendChild(tr);
+  }
+
+  // LV入力行（魔回の下）
+  const trLv = document.createElement("tr");
+  let tdLvLabel = document.createElement("td");
+  tdLvLabel.textContent = "レベル";
+  trLv.appendChild(tdLvLabel);
+
+  let tdLvInput = document.createElement("td");
+  const inputLv = document.createElement("input");
+  inputLv.type = "number";
+  inputLv.min = 1;
+  inputLv.value = "";
+  inputLv.placeholder = "数値入力";
+  inputLv.className = "lvInput";
+  inputLv.addEventListener("input", updateResults);
+  tdLvInput.appendChild(inputLv);
+  trLv.appendChild(tdLvInput);
+
+  // 右列は空セル
+  const tdEmpty = document.createElement("td");
+  tdEmpty.colSpan = 2;
+  trLv.appendChild(tdEmpty);
+
+  tbody.appendChild(trLv);
+}
+
+/* 結果表生成（4x4固定） */
+function createResultTable() {
+  const tbody = document.getElementById("resultTable");
+  tbody.innerHTML = "";
+
+  for (let i = 0; i < 4; i++) {
+    const tr = document.createElement("tr");
+
+    // 左列
+    let tdName = document.createElement("td");
+    tdName.textContent = stats[i];
+    tr.appendChild(tdName);
+
+    let tdResult = document.createElement("td");
+    tdResult.className = "result";
+    tdResult.dataset.index = i;
+    tdResult.textContent = "0.0";
+    tr.appendChild(tdResult);
+
+    // 右列
+    tdName = document.createElement("td");
+    tdName.textContent = stats[i+4];
+    tr.appendChild(tdName);
+
+    tdResult = document.createElement("td");
+    tdResult.className = "result";
+    tdResult.dataset.index = i+4;
+    tdResult.textContent = "0.0";
+    tr.appendChild(tdResult);
+
+    tbody.appendChild(tr);
+  }
+}
+
+/* 計算更新 */
+function updateResults() {
+  const lvInput = document.querySelector(".lvInput");
+  const lv = Number(lvInput.value) || 1;
+
+  document.querySelectorAll(".statInput").forEach(input => {
+    const idx = input.dataset.index;
+    const val = Number(input.value);
+    const resultTd = document.querySelector(`.result[data-index="${idx}"]`);
+    if (input.value === "" || isNaN(val)) {
+      resultTd.textContent = "0.0";
+    } else {
+      resultTd.textContent = (val / (lv + 9)).toFixed(2);
+    }
+  });
+}
+
+createStatTable();
+createResultTable();
+updateResults();
+</script>
+
+</body>
+</html>
