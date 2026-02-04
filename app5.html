@@ -28,7 +28,7 @@ h1, h2 {
   border-radius: 8px;
   margin-bottom: 12px;
   width: 100%;
-  overflow-x: hidden; /* 横スクロール無し */
+  overflow-x: hidden;
 }
 
 /* テーブル */
@@ -37,7 +37,7 @@ table {
   width: 100%;
   background: #2b2b44;
   font-size: 11px;
-  table-layout: fixed; /* 幅を均等に */
+  table-layout: fixed;
 }
 
 th, td {
@@ -68,13 +68,13 @@ input.lvInput {
 .missText { color: #66ccff; }
 .waitText { color: #aaa; }
 
-/* チェックボックス */
+/* ヘッダー内改行とチェックボックス */
 th label {
-  font-size: 10px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 2px;
+  font-size: 10px;
 }
 
 /* ノート */
@@ -104,11 +104,11 @@ th label {
     <thead>
       <tr>
         <th>LV</th>
-        <th>毒</th>
-        <th>技封印</th>
-        <th>凍結</th>
-        <th>ｸｫｰﾀｰ</th>
-        <th>ﾌﾚｱｰ</th>
+        <th>Lv2<br>毒</th>
+        <th>Lv3<br>技封印</th>
+        <th>Lv4<br>凍結</th>
+        <th>Lv5<br>ｸｫｰﾀｰ</th>
+        <th>Lv7<br>ﾌﾚｱｰ</th>
       </tr>
     </thead>
     <tbody id="inputTable"></tbody>
@@ -125,11 +125,26 @@ th label {
     <thead>
       <tr>
         <th>LV</th>
-        <th><label><input type="checkbox" data-mod="2">毒</label></th>
-        <th><label><input type="checkbox" data-mod="3">技封印</label></th>
-        <th><label><input type="checkbox" data-mod="4">凍結</label></th>
-        <th><label><input type="checkbox" data-mod="5">ｸｫｰﾀｰ</label></th>
-        <th><label><input type="checkbox" data-mod="7">ﾌﾚｱｰ</label></th>
+        <th>
+          Lv2<br>毒
+          <label><input type="checkbox" data-mod="2"></label>
+        </th>
+        <th>
+          Lv3<br>技封印
+          <label><input type="checkbox" data-mod="3"></label>
+        </th>
+        <th>
+          Lv4<br>凍結
+          <label><input type="checkbox" data-mod="4"></label>
+        </th>
+        <th>
+          Lv5<br>ｸｫｰﾀｰ
+          <label><input type="checkbox" data-mod="5"></label>
+        </th>
+        <th>
+          Lv7<br>ﾌﾚｱｰ
+          <label><input type="checkbox" data-mod="7"></label>
+        </th>
       </tr>
     </thead>
     <tbody></tbody>
