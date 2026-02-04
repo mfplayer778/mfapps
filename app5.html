@@ -13,22 +13,22 @@ body {
   background: #1e1e2f;
   color: #fff;
   margin: 0;
-  padding: 16px;
+  padding: 12px;
 }
 
-/* 見出し */
 h1, h2 {
   text-align: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 /* パネル */
 .panel {
   background: #2b2b44;
-  padding: 12px;
+  padding: 8px;
   border-radius: 8px;
   margin-bottom: 12px;
-  overflow-x: auto; /* 横スクロール対応 */
+  width: 100%;
+  overflow-x: hidden; /* 横スクロール無し */
 }
 
 /* テーブル */
@@ -36,31 +36,31 @@ table {
   border-collapse: collapse;
   width: 100%;
   background: #2b2b44;
-  font-size: 12px;
+  font-size: 11px;
+  table-layout: fixed; /* 幅を均等に */
 }
 
 th, td {
   border: 1px solid #555;
-  padding: 4px 6px;
+  padding: 4px;
   text-align: center;
-  white-space: nowrap;
+  word-wrap: break-word;
 }
 
-th {
-  background: #3a3a5a;
-}
+/* ヘッダー色 */
+th { background: #3a3a5a; }
 
 /* 入力欄 */
 input.lvInput {
-  width: 70px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 50px;
   background: #1e1e2f;
   color: #fff;
   border: none;
   border-radius: 4px;
-  padding: 6px;
+  padding: 4px;
   text-align: center;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 /* 判定文字色 */
@@ -70,27 +70,26 @@ input.lvInput {
 
 /* チェックボックス */
 th label {
-  font-size: 11px;
+  font-size: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
 }
 
 /* ノート */
 .note {
   margin-top: 4px;
-  margin-bottom: 8px;
-  font-size: 12px;
+  margin-bottom: 6px;
+  font-size: 11px;
   color: #ccc;
   text-align: center;
 }
 
-/* レスポンシブ対応 */
-@media (max-width: 600px) {
-  body { padding: 8px; }
+/* レスポンシブ */
+@media (max-width: 480px) {
   table { font-size: 10px; }
-  input.lvInput { padding: 4px; font-size: 12px; width: 50px; }
+  input.lvInput { padding: 2px; font-size: 10px; }
 }
 </style>
 </head>
@@ -105,11 +104,11 @@ th label {
     <thead>
       <tr>
         <th>LV</th>
-        <th>Lv2ポイズン</th>
-        <th>Lv3シールスキル</th>
-        <th>Lv4フリーズオール</th>
-        <th>Lv5クォーター</th>
-        <th>Lv7フレアー</th>
+        <th>毒</th>
+        <th>技封印</th>
+        <th>凍結</th>
+        <th>ｸｫｰﾀｰ</th>
+        <th>ﾌﾚｱｰ</th>
       </tr>
     </thead>
     <tbody id="inputTable"></tbody>
@@ -118,7 +117,7 @@ th label {
 
 <h2>レベル技対応表（Lv400～800）</h2>
 <div class="note">
-  各技のボックスにチェックを入れると回避レベルのみ表示できます。
+  チェックを入れると回避レベルのみ表示できます。
 </div>
 
 <div class="panel">
@@ -126,11 +125,11 @@ th label {
     <thead>
       <tr>
         <th>LV</th>
-        <th><label><input type="checkbox" data-mod="2">Lv2ポイズン</label></th>
-        <th><label><input type="checkbox" data-mod="3">Lv3シールスキル</label></th>
-        <th><label><input type="checkbox" data-mod="4">Lv4フリーズオール</label></th>
-        <th><label><input type="checkbox" data-mod="5">Lv5クォーター</label></th>
-        <th><label><input type="checkbox" data-mod="7">Lv7フレアー</label></th>
+        <th><label><input type="checkbox" data-mod="2">毒</label></th>
+        <th><label><input type="checkbox" data-mod="3">技封印</label></th>
+        <th><label><input type="checkbox" data-mod="4">凍結</label></th>
+        <th><label><input type="checkbox" data-mod="5">ｸｫｰﾀｰ</label></th>
+        <th><label><input type="checkbox" data-mod="7">ﾌﾚｱｰ</label></th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -142,11 +141,11 @@ const skills = [
   { mod: 2, text: "毒" },
   { mod: 3, text: "技封印" },
   { mod: 4, text: "凍結" },
-  { mod: 5, text: "クォーター" },
-  { mod: 7, text: "フレアー" }
+  { mod: 5, text: "ｸｫｰﾀｰ" },
+  { mod: 7, text: "ﾌﾚｱｰ" }
 ];
 
-/* 任意入力表 初期生成（4行固定） */
+/* 任意入力表 初期生成 */
 function createInputTable(rows = 4) {
   const tb = document.getElementById("inputTable");
   tb.innerHTML = "";
@@ -154,7 +153,6 @@ function createInputTable(rows = 4) {
   for (let i = 0; i < rows; i++) {
     const tr = document.createElement("tr");
 
-    // LV入力
     const tdLv = document.createElement("td");
     const input = document.createElement("input");
     input.type = "number";
@@ -164,7 +162,6 @@ function createInputTable(rows = 4) {
     tdLv.appendChild(input);
     tr.appendChild(tdLv);
 
-    // 技判定セル
     skills.forEach(() => {
       const td = document.createElement("td");
       td.textContent = "判定中";
@@ -232,15 +229,12 @@ function createMainTable() {
   }
 }
 
-/* フィルタ：チェックON → 発動レベルを除外 */
+/* チェックボックスフィルタ */
 function applyFilter() {
   const rules = [...document.querySelectorAll("th input")];
-
   document.querySelectorAll("#skillTable tbody tr").forEach(tr => {
     const lv = Number(tr.dataset.lv);
-    const show = rules.every(r =>
-      !r.checked || lv % Number(r.dataset.mod) !== 0
-    );
+    const show = rules.every(r => !r.checked || lv % Number(r.dataset.mod) !== 0);
     tr.style.display = show ? "" : "none";
   });
 }
