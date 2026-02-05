@@ -46,7 +46,6 @@ textarea {
   resize: none;
 }
 
-/* プレースホルダー色 */
 textarea::placeholder { color: #aaa; }
 
 #magic { height: 44px; }
@@ -59,6 +58,12 @@ textarea::placeholder { color: #aaa; }
   font-size: 20px;
   line-height: 1.4;
   color: #fff;
+}
+
+.resultValue span.range {
+  color: #66ccff; /* 水色 */
+  font-size: 24px; /* 少し大きめ */
+  font-weight: bold;
 }
 
 .error { color: #ff6666; font-weight: bold; }
@@ -90,9 +95,9 @@ button:active { opacity: 0.7; }
   <label>ヒールの数値（縦に連続入力）</label>
   <textarea id="values" placeholder="400
 400
-309
+320
 415
-450"></textarea>
+480"></textarea>
 </div>
 
 <div class="panel">
@@ -115,7 +120,6 @@ function calculate() {
     return;
   }
 
-  // 入力値を配列にする
   const rawNums = text
     .split(/\n+/)
     .map(v => parseFloat(v))
@@ -127,19 +131,22 @@ function calculate() {
     return;
   }
 
-  // 絶対値で計算
+  // 絶対値計算
   const absNums = rawNums.map(v => Math.abs(v));
   const minAbs = Math.min(...absNums);
   const maxAbs = Math.max(...absNums);
 
-  // 元の符号を保持して計算結果に反映
   const minSign = rawNums[absNums.indexOf(minAbs)] < 0 ? -1 : 1;
   const maxSign = rawNums[absNums.indexOf(maxAbs)] < 0 ? -1 : 1;
 
-  const A = maxSign * (maxAbs / (magic * 0.4 * 1.2) * 100);
-  const B = minSign * (minAbs / (magic * 0.4 * 0.8) * 100);
+  let A_calc = maxSign * (maxAbs / (magic * 0.4 * 1.2) * 100);
+  let B_calc = minSign * (minAbs / (magic * 0.4 * 0.8) * 100);
 
-  result.textContent = `このモンスターの回復量は・・・${B.toFixed(2)}p～${A.toFixed(2)}pです`;
+  const A = Math.max(A_calc, B_calc);
+  const B = Math.min(A_calc, B_calc);
+
+  // 結果表示（A～B部分を水色で大きく）
+  result.innerHTML = `このモンスターの回復量は・・・<span class="range">${B.toFixed(2)}p ～ ${A.toFixed(2)}p</span>です`;
   result.classList.remove("error");
 }
 
