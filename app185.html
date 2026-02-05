@@ -7,153 +7,34 @@
 
 <style>
 * { box-sizing: border-box; }
-
-body {
-  font-family: system-ui, -apple-system;
-  background: #1e1e2f;
-  color: #fff;
-  margin: 0;
-  padding: 6px;
-}
-
-h1 {
-  text-align: center;
-  margin: 4px 0 8px 0;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-/* パネル */
-.panel {
-  background: #2b2b44;
-  padding: 8px;
-  border-radius: 10px;
-  margin-bottom: 8px;
-  width: 100%;
-}
-
-/* 表タイトル */
-.table-title {
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 6px;
-  font-size: 16px;
-}
-
-/* セレクト */
-select {
-  width: 100%;
-  background: #1e1e2f;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 16px;
-  text-align: center;
-  font-weight: bold;
-}
-
-/* レベル入力 */
-input.lvInput {
-  width: 100%;
-  background: #1e1e2f;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 16px;
-  text-align: center;
-  font-weight: bold;
-  -moz-appearance: textfield;
-}
-
-input.lvInput::-webkit-outer-spin-button,
-input.lvInput::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* テーブル */
-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 15px;
-  table-layout: fixed;
-}
-
-/* 列幅調整 */
-td.nameCol {
-  width: 20%;
-  font-weight: bold;
-}
-
-td.valueCol {
-  width: 30%;
-}
-
-td {
-  border: 1px solid #555;
-  padding: 6px 2px;
-  text-align: center;
-  vertical-align: middle;
-  line-height: 1.2;
-}
-
-/* 値表示 */
-.value {
-  font-weight: bold;
-  font-size: 15px;
-  color: #fff;
-}
-
-/* 耐性カラー */
+body { font-family: system-ui, -apple-system; background: #1e1e2f; color: #fff; margin: 0; padding: 6px; }
+h1 { text-align: center; margin: 4px 0 8px 0; font-size: 20px; font-weight: bold; }
+.panel { background: #2b2b44; padding: 8px; border-radius: 10px; margin-bottom: 8px; width: 100%; }
+.table-title { text-align: center; font-weight: bold; margin-bottom: 6px; font-size: 16px; }
+select { width: 100%; background: #1e1e2f; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 16px; text-align: center; font-weight: bold; }
+input.lvInput { width: 100%; background: #1e1e2f; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 16px; text-align: center; font-weight: bold; -moz-appearance: textfield; }
+input.lvInput::-webkit-outer-spin-button, input.lvInput::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+label { display: flex; align-items: center; gap: 6px; font-size: 15px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; table-layout: fixed; }
+td.nameCol { width: 20%; font-weight: bold; }
+td.valueCol { width: 30%; }
+td { border: 1px solid #555; padding: 6px 2px; text-align: center; vertical-align: middle; line-height: 1.2; }
+.value { font-weight: bold; font-size: 15px; color: #fff; }
+.range { display: block; font-size: 13px; color: #f5e14c; margin-top: 2px; }
 .value.red { color: #ff6666; }
 .value.blue { color: #66ccff; }
-
-/* スマホ最適化 */
 @media (max-width: 480px) {
   body { padding: 4px; }
-
-  h1 {
-    font-size: 18px;
-    margin: 2px 0 6px 0;
-  }
-
-  .panel {
-    padding: 6px;
-    margin-bottom: 6px;
-    border-radius: 8px;
-  }
-
-  .table-title {
-    font-size: 15px;
-    margin-bottom: 4px;
-  }
-
-  select, input.lvInput {
-    font-size: 15px;
-    padding: 8px;
-  }
-
-  table {
-    font-size: 14px;
-  }
-
-  td {
-    padding: 5px 2px;
-  }
-
-  .value {
-    font-size: 14px;
-  }
-
-  td.nameCol {
-    width: 18%;
-  }
-
-  td.valueCol {
-    width: 32%;
-  }
+  h1 { font-size: 18px; margin: 2px 0 6px 0; }
+  .panel { padding: 6px; margin-bottom: 6px; border-radius: 8px; }
+  .table-title { font-size: 15px; margin-bottom: 4px; }
+  select, input.lvInput { font-size: 15px; padding: 8px; }
+  table { font-size: 14px; }
+  td { padding: 5px 2px; }
+  .value { font-size: 14px; }
+  .range { font-size: 12px; }
+  td.nameCol { width: 18%; }
+  td.valueCol { width: 32%; }
 }
 </style>
 </head>
@@ -162,7 +43,6 @@ td {
 
 <h1>モンスターデータベース</h1>
 
-<!-- モンスター選択 -->
 <div class="panel">
   <div class="table-title">モンスター選択</div>
   <select id="monsterSelect">
@@ -170,7 +50,6 @@ td {
   </select>
 </div>
 
-<!-- 基本指数表 -->
 <div class="panel">
   <div class="table-title">基本指数</div>
   <table>
@@ -178,20 +57,15 @@ td {
   </table>
 </div>
 
-<!-- 基本ステータス表 -->
 <div class="panel">
   <div class="table-title">基本ステータス</div>
 
-  <!-- レベル入力 -->
   <div style="margin-bottom:6px;">
     <input class="lvInput" id="lvInput" type="number" min="1" placeholder="レベルを入力">
   </div>
 
-  <!-- 幅表示チェックボックス -->
   <div style="margin-bottom:6px;">
-    <label style="font-size:17px;">
-      <input type="checkbox" id="showRangeCheckbox"> ステータスの下限～上限を表示する
-    </label>
+    <label><input type="checkbox" id="showRange"> ステータス値の幅を表示する</label>
   </div>
 
   <table>
@@ -200,8 +74,9 @@ td {
 </div>
 
 <script>
-// ===== モンスターデータ（指数） =====
+// ===== モンスターデータ =====
 const monsterDB = [
+
   {"モンスター名":"スライム","HP":"5","攻撃":"7","敏捷":"7","魔回":"10","SP":"6","防御":"14","魔攻":"8","魔防":"5","LP":"100","火":"-150","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
   {"モンスター名":"ホーネット","HP":"8","攻撃":"8","敏捷":"13","魔回":"10","SP":"12","防御":"8","魔攻":"8","魔防":"13","LP":"30","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
   {"モンスター名":"クラブ","HP":"6","攻撃":"10","敏捷":"9","魔回":"8","SP":"5","防御":"12","魔攻":"6","魔防":"12","LP":"30","火":"-100","氷":"-50","光":"-100","闇":"-100","回復量":"100"},
@@ -221,11 +96,6 @@ const monsterDB = [
   {"モンスター名":"アイバット","HP":"7","攻撃":"8","敏捷":"13","魔回":"9","SP":"16","防御":"8","魔攻":"10","魔防":"10","LP":"30","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
   {"モンスター名":"エルフマージ","HP":"8","攻撃":"7","敏捷":"10","魔回":"10","SP":"15","防御":"7","魔攻":"13","魔防":"12","LP":"30","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
   {"モンスター名":"ライオン","HP":"12","攻撃":"13","敏捷":"10","魔回":"5","SP":"10","防御":"10","魔攻":"5","魔防":"7","LP":"30","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"ファイヤーバード","HP":"5","攻撃":"3","敏捷":"13","魔回":"7","SP":"12","防御":"6","魔攻":"10","魔防":"10","LP":"7","火":"100","氷":"-200","光":"0","闇":"0","回復量":"100"},
-  {"モンスター名":"アイスバード","HP":"5","攻撃":"3","敏捷":"13","魔回":"7","SP":"12","防御":"6","魔攻":"10","魔防":"10","LP":"7","火":"-200","氷":"100","光":"0","闇":"0","回復量":"100"},
-  {"モンスター名":"サンダーバード","HP":"5","攻撃":"3","敏捷":"13","魔回":"7","SP":"12","防御":"6","魔攻":"10","魔防":"10","LP":"7","火":"0","氷":"0","光":"100","闇":"-200","回復量":"100"},
-  {"モンスター名":"チェッカー","HP":"3","攻撃":"3","敏捷":"14","魔回":"6","SP":"14","防御":"5","魔攻":"7","魔防":"7","LP":"7","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"ライフデーモン","HP":"10","攻撃":"2","敏捷":"20","魔回":"4","SP":"10","防御":"8","魔攻":"3","魔防":"8","LP":"5","火":"-100","氷":"-100","光":"-200","闇":"50","回復量":"100"},
   {"モンスター名":"メタリックナイト","HP":"9","攻撃":"10","敏捷":"7","魔回":"7","SP":"8","防御":"14","魔攻":"7","魔防":"10","LP":"30","火":"-25","氷":"-25","光":"-200","闇":"-100","回復量":"100"},
   {"モンスター名":"サスカッチ","HP":"11","攻撃":"13","敏捷":"8","魔回":"8","SP":"7","防御":"8","魔攻":"7","魔防":"8","LP":"30","火":"-100","氷":"-150","光":"-100","闇":"-100","回復量":"100"},
   {"モンスター名":"フェアリー","HP":"5","攻撃":"5","敏捷":"16","魔回":"10","SP":"16","防御":"7","魔攻":"10","魔防":"10","LP":"20","火":"-100","氷":"-100","光":"-25","闇":"-150","回復量":"100"},
@@ -247,82 +117,92 @@ const monsterDB = [
   {"モンスター名":"ドラゴンライダー","HP":"12","攻撃":"11","敏捷":"11","魔回":"7","SP":"16","防御":"10","魔攻":"7","魔防":"9","LP":"10","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
   {"モンスター名":"モアイ","HP":"6","攻撃":"8","敏捷":"6","魔回":"6","SP":"6","防御":"10","魔攻":"6","魔防":"50","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
   {"モンスター名":"ジャイアント","HP":"14","攻撃":"12","敏捷":"7","魔回":"7","SP":"10","防御":"10","魔攻":"6","魔防":"7","LP":"10","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"ノーム","HP":"7","攻撃":"6","敏捷":"11","魔回":"9","SP":"17","防御":"8","魔攻":"12","魔防":"14","LP":"10","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"キマイラ","HP":"13","攻撃":"10","敏捷":"10","魔回":"8","SP":"8","防御":"10","魔攻":"11","魔防":"10","LP":"4","火":"-50","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"ボーンドラゴン","HP":"16","攻撃":"12","敏捷":"16","魔回":"4","SP":"16","防御":"8","魔攻":"12","魔防":"8","LP":"2","火":"-150","氷":"-100","光":"-150","闇":"50","回復量":"-100"},
-  {"モンスター名":"ゴーレム","HP":"10","攻撃":"12","敏捷":"6","魔回":"9","SP":"10","防御":"13","魔攻":"8","魔防":"8","LP":"5","火":"0","氷":"-100","光":"-100","闇":"-50","回復量":"100"},
-  {"モンスター名":"ガーディアン","HP":"12","攻撃":"12","敏捷":"7","魔回":"10","SP":"10","防御":"12","魔攻":"8","魔防":"10","LP":"5","火":"0","氷":"-100","光":"-200","闇":"-100","回復量":"100"},
-  {"モンスター名":"レイス","HP":"8","攻撃":"7","敏捷":"10","魔回":"8","SP":"14","防御":"8","魔攻":"12","魔防":"12","LP":"5","火":"-150","氷":"-100","光":"-200","闇":"100","回復量":"-100"},
-  {"モンスター名":"デスハンター","HP":"10","攻撃":"10","敏捷":"10","魔回":"7","SP":"14","防御":"7","魔攻":"12","魔防":"12","LP":"5","火":"-150","氷":"-100","光":"-200","闇":"100","回復量":"-100"},
-  {"モンスター名":"スピードマスター","HP":"10","攻撃":"10","敏捷":"16","魔回":"10","SP":"10","防御":"8","魔攻":"10","魔防":"8","LP":"5","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"光の精霊","HP":"8","攻撃":"6","敏捷":"9","魔回":"8","SP":"12","防御":"8","魔攻":"12","魔防":"11","LP":"5","火":"-100","氷":"-100","光":"100","闇":"-200","回復量":"100"},
-  {"モンスター名":"ソードマスター","HP":"14","攻撃":"14","敏捷":"8","魔回":"7","SP":"10","防御":"12","魔攻":"7","魔防":"25","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"ヒーリングマスター","HP":"10","攻撃":"10","敏捷":"11","魔回":"16","SP":"10","防御":"9","魔攻":"11","魔防":"12","LP":"5","火":"-100","氷":"-100","光":"-50","闇":"-100","回復量":"100"},
-  {"モンスター名":"マジックマスター","HP":"8","攻撃":"8","敏捷":"10","魔回":"10","SP":"14","防御":"25","魔攻":"14","魔防":"12","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"ガードレディ","HP":"7","攻撃":"11","敏捷":"11","魔回":"7","SP":"10","防御":"8","魔攻":"7","魔防":"8","LP":"5","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"人食い箱","HP":"8","攻撃":"15","敏捷":"10","魔回":"8","SP":"13","防御":"10","魔攻":"8","魔防":"10","LP":"5","火":"-200","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"ミノタウロス","HP":"12","攻撃":"13","敏捷":"10","魔回":"8","SP":"9","防御":"10","魔攻":"7","魔防":"8","LP":"5","火":"-100","氷":"-100","光":"-200","闇":"0","回復量":"100"},
-  {"モンスター名":"光の天使","HP":"7","攻撃":"6","敏捷":"13","魔回":"15","SP":"14","防御":"8","魔攻":"8","魔防":"10","LP":"5","火":"-100","氷":"-100","光":"0","闇":"-150","回復量":"150"},
-  {"モンスター名":"ジャック・ザ・リッパー","HP":"10","攻撃":"10","敏捷":"10","魔回":"10","SP":"10","防御":"10","魔攻":"10","魔防":"10","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"チャレンジャーキラー","HP":"16","攻撃":"12","敏捷":"10","魔回":"3","SP":"7","防御":"10","魔攻":"3","魔防":"10","LP":"7","火":"-50","氷":"-50","光":"-150","闇":"0","回復量":"0"},
-  {"モンスター名":"エビルソーサラー","HP":"6","攻撃":"3","敏捷":"14","魔回":"8","SP":"13","防御":"5","魔攻":"12","魔防":"9","LP":"7","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"50"},
-  {"モンスター名":"ハゲチャピンα","HP":"10","攻撃":"10","敏捷":"18","魔回":"2","SP":"2","防御":"8","魔攻":"4","魔防":"8","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"ハゲチャピンβ","HP":"8","攻撃":"8","敏捷":"10","魔回":"10","SP":"14","防御":"8","魔攻":"12","魔防":"12","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"ベイビーエンジェル","HP":"5","攻撃":"8","敏捷":"19","魔回":"10","SP":"15","防御":"8","魔攻":"10","魔防":"11","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"ヤマタノオロチ","HP":"16","攻撃":"10","敏捷":"8","魔回":"2","SP":"2","防御":"10","魔攻":"10","魔防":"10","LP":"2","火":"-50","氷":"-150","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"アーマーナイト","HP":"15.5","攻撃":"14.5","敏捷":"5.6","魔回":"2.5","SP":"8.9","防御":"12.7","魔攻":"2.5","魔防":"11.5","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"サムライ","HP":"10.5","攻撃":"10.5","敏捷":"19.5","魔回":"8.6","SP":"10","防御":"8.5","魔攻":"7.8","魔防":"8.5","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"ペガサス","HP":"14.5","攻撃":"7.6","敏捷":"11.5","魔回":"18.5","SP":"13.2","防御":"9","魔攻":"10","魔防":"11","LP":"2","火":"-100","氷":"-100","光":"0","闇":"-200","回復量":"130"},
-  {"モンスター名":"ダンタリアン","HP":"9.5","攻撃":"6.5","敏捷":"9.5","魔回":"10.5","SP":"15.5","防御":"7.5","魔攻":"14.5","魔防":"13","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
-  {"モンスター名":"シルバーソルジャー","HP":"11","攻撃":"15.5","敏捷":"8.6","魔回":"4","SP":"4","防御":"12","魔攻":"4","魔防":"9.5","LP":"2","火":"-100","氷":"-100","光":"-200","闇":"-100","回復量":"100"},
-  {"モンスター名":"ブラストシューター","HP":"10","攻撃":"2","敏捷":"16","魔回":"3","SP":"13","防御":"9","魔攻":"3","魔防":"9","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"}
+{"モンスター名":"ノーム","HP":"7","攻撃":"6","敏捷":"11","魔回":"9","SP":"17","防御":"8","魔攻":"12","魔防":"14","LP":"10","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"キマイラ","HP":"13","攻撃":"10","敏捷":"10","魔回":"8","SP":"8","防御":"10","魔攻":"11","魔防":"10","LP":"4","火":"-50","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"ボーンドラゴン","HP":"16","攻撃":"12","敏捷":"16","魔回":"4","SP":"16","防御":"8","魔攻":"12","魔防":"8","LP":"2","火":"-150","氷":"-100","光":"-150","闇":"50","回復量":"-100"},
+{"モンスター名":"ゴーレム","HP":"10","攻撃":"12","敏捷":"6","魔回":"9","SP":"10","防御":"13","魔攻":"8","魔防":"8","LP":"5","火":"0","氷":"-100","光":"-100","闇":"-50","回復量":"100"},
+{"モンスター名":"ガーディアン","HP":"12","攻撃":"12","敏捷":"7","魔回":"10","SP":"10","防御":"12","魔攻":"8","魔防":"10","LP":"5","火":"0","氷":"-100","光":"-200","闇":"-100","回復量":"100"},
+{"モンスター名":"レイス","HP":"8","攻撃":"7","敏捷":"10","魔回":"8","SP":"14","防御":"8","魔攻":"12","魔防":"12","LP":"5","火":"-150","氷":"-100","光":"-200","闇":"100","回復量":"-100"},
+{"モンスター名":"デスハンター","HP":"10","攻撃":"10","敏捷":"10","魔回":"7","SP":"14","防御":"7","魔攻":"12","魔防":"12","LP":"5","火":"-150","氷":"-100","光":"-200","闇":"100","回復量":"-100"},
+{"モンスター名":"スピードマスター","HP":"10","攻撃":"10","敏捷":"16","魔回":"10","SP":"10","防御":"8","魔攻":"10","魔防":"8","LP":"5","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"光の精霊","HP":"8","攻撃":"6","敏捷":"9","魔回":"8","SP":"12","防御":"8","魔攻":"12","魔防":"11","LP":"5","火":"-100","氷":"-100","光":"100","闇":"-200","回復量":"100"},
+{"モンスター名":"人食い箱","HP":"8","攻撃":"15","敏捷":"10","魔回":"8","SP":"13","防御":"10","魔攻":"8","魔防":"10","LP":"5","火":"-200","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"ミノタウロス","HP":"12","攻撃":"13","敏捷":"10","魔回":"8","SP":"9","防御":"10","魔攻":"7","魔防":"8","LP":"5","火":"-100","氷":"-100","光":"-200","闇":"0","回復量":"100"},
+{"モンスター名":"ジャック・ザ・リッパー","HP":"10","攻撃":"10","敏捷":"10","魔回":"10","SP":"10","防御":"10","魔攻":"10","魔防":"10","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"光の天使","HP":"7","攻撃":"6","敏捷":"13","魔回":"15","SP":"14","防御":"8","魔攻":"8","魔防":"10","LP":"5","火":"-100","氷":"-100","光":"0","闇":"-150","回復量":"150"},
+{"モンスター名":"ソードマスター","HP":"14","攻撃":"14","敏捷":"8","魔回":"7","SP":"10","防御":"12","魔攻":"7","魔防":"25","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"ヒーリングマスター","HP":"10","攻撃":"10","敏捷":"11","魔回":"16","SP":"10","防御":"9","魔攻":"11","魔防":"12","LP":"5","火":"-100","氷":"-100","光":"-50","闇":"-100","回復量":"100"},
+{"モンスター名":"マジックマスター","HP":"8","攻撃":"8","敏捷":"10","魔回":"10","SP":"14","防御":"25","魔攻":"14","魔防":"12","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"ガードレディ","HP":"7","攻撃":"11","敏捷":"11","魔回":"7","SP":"10","防御":"8","魔攻":"7","魔防":"8","LP":"5","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"チャレンジャーキラー","HP":"16","攻撃":"12","敏捷":"10","魔回":"3","SP":"7","防御":"10","魔攻":"3","魔防":"10","LP":"7","火":"-50","氷":"-50","光":"-150","闇":"0","回復量":"0"},
+{"モンスター名":"エビルソーサラー","HP":"6","攻撃":"3","敏捷":"14","魔回":"8","SP":"13","防御":"5","魔攻":"12","魔防":"9","LP":"7","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"50"},
+{"モンスター名":"ハゲチャピンα","HP":"10","攻撃":"10","敏捷":"18","魔回":"2","SP":"2","防御":"8","魔攻":"4","魔防":"8","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"ハゲチャピンβ","HP":"8","攻撃":"8","敏捷":"10","魔回":"10","SP":"14","防御":"8","魔攻":"12","魔防":"12","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"ベイビーエンジェル","HP":"5","攻撃":"8","敏捷":"19","魔回":"10","SP":"15","防御":"8","魔攻":"10","魔防":"11","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"ヤマタノオロチ","HP":"16","攻撃":"10","敏捷":"8","魔回":"2","SP":"2","防御":"10","魔攻":"10","魔防":"10","LP":"2","火":"-50","氷":"-150","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"チェッカー","HP":"3","攻撃":"3","敏捷":"14","魔回":"6","SP":"14","防御":"5","魔攻":"7","魔防":"7","LP":"7","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"ファイヤーバード","HP":"5","攻撃":"3","敏捷":"13","魔回":"7","SP":"12","防御":"6","魔攻":"10","魔防":"10","LP":"7","火":"100","氷":"-200","光":"0","闇":"0","回復量":"100"},
+{"モンスター名":"アイスバード","HP":"5","攻撃":"3","敏捷":"13","魔回":"7","SP":"12","防御":"6","魔攻":"10","魔防":"10","LP":"7","火":"-200","氷":"100","光":"0","闇":"0","回復量":"100"},
+{"モンスター名":"サンダーバード","HP":"5","攻撃":"3","敏捷":"13","魔回":"7","SP":"12","防御":"6","魔攻":"10","魔防":"10","LP":"7","火":"0","氷":"0","光":"100","闇":"-200","回復量":"100"},
+{"モンスター名":"ライフデーモン","HP":"10","攻撃":"2","敏捷":"20","魔回":"4","SP":"10","防御":"8","魔攻":"3","魔防":"8","LP":"5","火":"-100","氷":"-100","光":"-200","闇":"50","回復量":"100"},
+{"モンスター名":"アーマーナイト","HP":"15.5","攻撃":"14.5","敏捷":"5.6","魔回":"2.5","SP":"8.9","防御":"12.7","魔攻":"2.5","魔防":"11.5","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"サムライ","HP":"10.5","攻撃":"10.5","敏捷":"19.5","魔回":"8.6","SP":"10","防御":"8.5","魔攻":"7.8","魔防":"8.5","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"ペガサス","HP":"14.5","攻撃":"7.6","敏捷":"11.5","魔回":"18.5","SP":"13.2","防御":"9","魔攻":"10","魔防":"11","LP":"2","火":"-100","氷":"-100","光":"0","闇":"-200","回復量":"130"},
+{"モンスター名":"ダンタリアン","HP":"9.5","攻撃":"6.5","敏捷":"9.5","魔回":"10.5","SP":"15.5","防御":"7.6","魔攻":"14.5","魔防":"13","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"シルバーソルジャー","HP":"11","攻撃":"15.5","敏捷":"8.6","魔回":"4","SP":"4","防御":"12","魔攻":"4","魔防":"9.5","LP":"2","火":"-100","氷":"-100","光":"-200","闇":"-100","回復量":"100"},
+{"モンスター名":"ブラストシューター","HP":"10","攻撃":"2","敏捷":"16","魔回":"3","SP":"13","防御":"9","魔攻":"4","魔防":"9","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"バンパイアガール","HP":"8.8","攻撃":"7.5","敏捷":"12.5","魔回":"6","SP":"15.5","防御":"7.9","魔攻":"11.5","魔防":"11","LP":"2","火":"-100","氷":"-100","光":"-200","闇":"100","回復量":"0"},
+{"モンスター名":"エクセクレイター","HP":"8.5","攻撃":"6","敏捷":"13.5","魔回":"8","SP":"999k","防御":"8.5","魔攻":"8.5","魔防":"10.5","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"ジャッジ","HP":"10","攻撃":"10.5","敏捷":"16","魔回":"8","SP":"10","防御":"15.5","魔攻":"13.5","魔防":"8","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"マスタードラゴン","HP":"10","攻撃":"10","敏捷":"15","魔回":"5","SP":"10","防御":"10","魔攻":"10","魔防":"10","LP":"5","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"ガルーダ","HP":"10","攻撃":"10","敏捷":"17","魔回":"6","SP":"4","防御":"10","魔攻":"9","魔防":"10","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"ゴールデンドラゴン","HP":"10","攻撃":"10","敏捷":"15","魔回":"6","SP":"5","防御":"10","魔攻":"10","魔防":"10","LP":"2","火":"-100","氷":"-100","光":"-50","闇":"-100","回復量":"100"},
+{"モンスター名":"魔界の王","HP":"12","攻撃":"10","敏捷":"10","魔回":"10","SP":"10","防御":"10","魔攻":"10","魔防":"10","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"魔神","HP":"10","攻撃":"10","敏捷":"20","魔回":"10","SP":"10","防御":"10","魔攻":"10","魔防":"10","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"フレイムアーマー","HP":"10.8","攻撃":"11.2","敏捷":"8.6","魔回":"5.7","SP":"8.5","防御":"9","魔攻":"8.7","魔防":"9","LP":"2","火":"100","氷":"-150","光":"0","闇":"0","回復量":"100"},
+{"モンスター名":"アイスアーマー","HP":"9.2","攻撃":"13.4","敏捷":"7.6","魔回":"4.1","SP":"7.5","防御":"9","魔攻":"8.8","魔防":"9","LP":"2","火":"-150","氷":"100","光":"0","闇":"0","回復量":"100"},
+{"モンスター名":"ホーリーアーマー","HP":"9","攻撃":"8","敏捷":"14.4","魔回":"15.5","SP":"18.2","防御":"9","魔攻":"13.1","魔防":"9","LP":"2","火":"0","氷":"0","光":"100","闇":"-150","回復量":"100"},
+{"モンスター名":"ダークアーマー","HP":"10","攻撃":"11","敏捷":"10","魔回":"9","SP":"11","防御":"9","魔攻":"10","魔防":"9","LP":"2","火":"0","氷":"0","光":"-150","闇":"100","回復量":"100"},
+{"モンスター名":"ゴールドゴーレム","HP":"14.1","攻撃":"12.5","敏捷":"7.6","魔回":"4","SP":"10","防御":"9","魔攻":"5","魔防":"8","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
+{"モンスター名":"ラストドラゴン","HP":"10","攻撃":"14","敏捷":"50","魔回":"50","SP":"999k","防御":"14","魔攻":"13","魔防":"9","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"300"},
 ];
 
 // ===== 表の並び指定 =====
 const LEFT_COL = ["HP","攻撃","敏捷","魔回","回復量","火","氷"];
 const RIGHT_COL = ["SP","防御","魔攻","魔防","LP","光","闇"];
-
-const LABEL_MAP = {
-  "火": "火耐性",
-  "氷": "氷耐性",
-  "光": "光耐性",
-  "闇": "闇耐性"
-};
-
-const FIXED_KEYS = ["回復量","火","氷","光","闇","LP"];
+const LABEL_MAP = {"火":"火耐性","氷":"氷耐性","光":"光耐性","闇":"闇耐性"};
+const FIXED_KEYS = ["LP"]; // レベルに依存しない固定値のみ
+const BASIC_KEYS = ["回復量","火","氷","光","闇"]; // 基本指数がそのままステータスになるキー
 
 // ===== DOM =====
 const monsterSelect = document.getElementById("monsterSelect");
 const indexTable = document.getElementById("indexTable");
 const statTable = document.getElementById("statTable");
 const lvInput = document.getElementById("lvInput");
-const showRangeCheckbox = document.getElementById("showRangeCheckbox");
+const showRange = document.getElementById("showRange");
 
-// ===== 表を初期で作る（空表示） =====
+// ===== 初期空表作成 =====
 function createEmptyTables(){
   indexTable.innerHTML = "";
   statTable.innerHTML = "";
+  for(let i=0;i<LEFT_COL.length;i++){
+    const leftKey=LEFT_COL[i];
+    const rightKey=RIGHT_COL[i];
 
-  for(let i=0; i<LEFT_COL.length; i++){
-    const leftKey = LEFT_COL[i];
-    const rightKey = RIGHT_COL[i];
-
-    // --- 基本指数 ---
-    const trIndex = document.createElement("tr");
-    trIndex.innerHTML = `
-      <td class="nameCol">${LABEL_MAP[leftKey] || leftKey}</td>
+    const trIndex=document.createElement("tr");
+    trIndex.innerHTML=`
+      <td class="nameCol">${LABEL_MAP[leftKey]||leftKey}</td>
       <td class="valueCol value" data-type="index" data-key="${leftKey}">-</td>
-      <td class="nameCol">${LABEL_MAP[rightKey] || rightKey}</td>
+      <td class="nameCol">${LABEL_MAP[rightKey]||rightKey}</td>
       <td class="valueCol value" data-type="index" data-key="${rightKey}">-</td>
     `;
     indexTable.appendChild(trIndex);
 
-    // --- 基本ステータス ---
-    const trStat = document.createElement("tr");
-    trStat.innerHTML = `
-      <td class="nameCol">${LABEL_MAP[leftKey] || leftKey}</td>
+    const trStat=document.createElement("tr");
+    trStat.innerHTML=`
+      <td class="nameCol">${LABEL_MAP[leftKey]||leftKey}</td>
       <td class="valueCol value" data-type="stat" data-key="${leftKey}">-</td>
-      <td class="nameCol">${LABEL_MAP[rightKey] || rightKey}</td>
+      <td class="nameCol">${LABEL_MAP[rightKey]||rightKey}</td>
       <td class="valueCol value" data-type="stat" data-key="${rightKey}">-</td>
     `;
     statTable.appendChild(trStat);
@@ -330,160 +210,119 @@ function createEmptyTables(){
 }
 
 // ===== 色判定 =====
-function getColorClass(key, value){
-  const num = Number(value);
+function getColorClass(key,value){
+  const num=Number(value);
   if(isNaN(num)) return "";
-
-  if(key === "回復量"){
-    if(num < 100) return "blue";
-    if(num > 100) return "red";
-    return "";
-  }
-
-  if(key === "火" || key === "氷" || key === "光" || key === "闇"){
-    if(num < -100) return "blue";
-    if(num > -100) return "red";
-    return "";
-  }
-
+  if(key==="回復量"){ if(num<100) return "blue"; if(num>100) return "red"; return ""; }
+  if(["火","氷","光","闇"].includes(key)){ if(num<-100) return "blue"; if(num>-100) return "red"; return ""; }
   return "";
 }
 
 // ===== +表示用 =====
-function formatPlus(key, value){
-  if(value === null || value === undefined || value === "") return "-";
-  const num = Number(value);
+function formatPlus(key,value){
+  if(value===null||value===undefined||value==="") return "-";
+  if(value==="999k") return "999k";
+  const num=Number(value);
   if(isNaN(num)) return value;
-
-  if(key === "回復量" || key === "火" || key === "氷" || key === "光" || key === "闇"){
-    if(num > 0) return "+" + num;
-  }
-
+  if(BASIC_KEYS.includes(key) && num>0) return "+"+num;
   return String(num);
 }
 
-// ===== 指数表示更新 =====
+// ===== 指数更新 =====
 function updateIndexTable(monster){
-  document.querySelectorAll('[data-type="index"]').forEach(td => {
-    const key = td.dataset.key;
-
-    if(!monster){
-      td.textContent = "-";
-      td.className = "valueCol value";
-      return;
-    }
-
-    const val = monster[key];
-    td.textContent = formatPlus(key, val);
-    td.className = "valueCol value " + getColorClass(key, val);
+  document.querySelectorAll('[data-type="index"]').forEach(td=>{
+    const key=td.dataset.key;
+    if(!monster){ td.textContent="-"; td.className="valueCol value"; return; }
+    const val=monster[key];
+    td.textContent=formatPlus(key,val);
+    td.className="valueCol value "+getColorClass(key,val);
   });
 }
 
-// ===== ステータス幅計算 =====
-function getStatRange(key, value){
-  const num = Number(value);
+// ===== 幅計算 =====
+function calcRange(key,val){
+  if(val==="999k") return null;
+  const num=Number(val);
   if(isNaN(num)) return null;
 
-  if(key === "LP") return null;
-
-  let min, max;
-  if(["HP","攻撃","敏捷","魔回","SP","防御","魔攻","魔防"].includes(key)){
-    min = Math.floor(num * 0.95);
-    max = Math.ceil(num * 1.05);
-  } else if(["回復量","火","氷","光","闇"].includes(key)){
-    min = Math.floor(num * 0.8);
-    max = Math.ceil(num * 1.2);
-  } else {
-    return null;
-  }
-
-  return `${min}~${max}`;
+  if(BASIC_KEYS.includes(key)) return [Math.floor(num*0.8), Math.ceil(num*1.2)];
+  return [Math.floor(num*0.95), Math.ceil(num*1.05)];
 }
 
-// ===== ステータス計算更新 =====
+// ===== ステータス更新 =====
 function updateStatTable(monster){
-  const lv = Number(lvInput.value);
-  const showRange = showRangeCheckbox.checked;
+  const lv=Number(lvInput.value);
+  const show=showRange.checked;
 
-  document.querySelectorAll('[data-type="stat"]').forEach(td => {
-    const key = td.dataset.key;
+  document.querySelectorAll('[data-type="stat"]').forEach(td=>{
+    const key=td.dataset.key;
+    if(!monster){ td.textContent="-"; td.className="valueCol value"; return; }
+    const val=monster[key];
 
-    if(!monster){
-      td.innerHTML = "-";
-      td.className = "valueCol value";
+    // 固定表示
+    if(val==="999k"){ td.textContent="999k"; td.className="valueCol value"; return; }
+    if(FIXED_KEYS.includes(key)){ td.textContent=formatPlus(key,val); td.className="valueCol value "+getColorClass(key,val); return; }
+
+    // 基本指数のみ
+    if(BASIC_KEYS.includes(key)){
+      td.textContent=formatPlus(key,val);
+      td.className="valueCol value "+getColorClass(key,val);
+
+      if(show){
+        const [min,max]=calcRange(key,Number(val))||[];
+        if(min!==undefined && max!==undefined){
+          let span=document.createElement("span");
+          span.className="range";
+          span.textContent=`(${min}~${max})`;
+          td.appendChild(span);
+        }
+      }
       return;
     }
 
-    // 耐性と回復量とLPは指数そのまま
-    if(FIXED_KEYS.includes(key)){
-      const fixedVal = Number(monster[key]);
-      td.innerHTML = formatPlus(key, fixedVal);
-if(showRange && key !== "LP") {
-  const range = getStatRange(key, fixedVal);
-  if(range) td.innerHTML += `<br><span style="font-size:12px;color:#ffdd55;">(${range})</span>`;
-}
+    // レベル依存ステータス
+    if(isNaN(lv)||lv<=0){ td.textContent="-"; td.className="valueCol value"; return; }
+    const base=Number(val);
+    if(isNaN(base)){ td.textContent=val; td.className="valueCol value"; return; }
+    const statValue=Math.round(base*(lv+9));
+    td.textContent=statValue;
+    td.className="valueCol value";
 
-      td.className = "valueCol value " + getColorClass(key, fixedVal);
-      return;
+    if(show){
+      const [min,max]=calcRange(key,statValue)||[];
+      if(min!==undefined && max!==undefined){
+        let span=document.createElement("span");
+        span.className="range";
+        span.textContent=`(${min}~${max})`;
+        td.appendChild(span);
+      }
     }
-
-    // レベル未入力なら計算できない
-    if(isNaN(lv) || lv <= 0){
-      td.innerHTML = "-";
-      td.className = "valueCol value";
-      return;
-    }
-
-    const base = Number(monster[key]);
-    if(isNaN(base)){
-      td.innerHTML = "-";
-      td.className = "valueCol value";
-      return;
-    }
-
-    const statValue = Math.round(base * (lv + 9));
-    td.innerHTML = String(statValue);
-
-// 幅表示
-if(showRange){
-  const range = getStatRange(key, statValue);
-  if(range) td.innerHTML += `<br><span style="font-size:12px;color:#ffdd55;">(${range})</span>`;
-}
-
-
-    td.className = "valueCol value";
   });
 }
 
 // ===== プルダウン生成 =====
 function initSelect(){
-  monsterDB.forEach((m, idx) => {
-    const opt = document.createElement("option");
-    opt.value = idx;
-    opt.textContent = m["モンスター名"];
+  monsterDB.forEach((m,idx)=>{
+    const opt=document.createElement("option");
+    opt.value=idx;
+    opt.textContent=m["モンスター名"];
     monsterSelect.appendChild(opt);
   });
 }
 
 // ===== 全体更新 =====
 function updateAll(){
-  const idx = monsterSelect.value;
-
-  if(idx === ""){
-    updateIndexTable(null);
-    updateStatTable(null);
-    return;
-  }
-
-  const monster = monsterDB[idx];
+  const idx=monsterSelect.value;
+  if(idx===""){ updateIndexTable(null); updateStatTable(null); return; }
+  const monster=monsterDB[idx];
   updateIndexTable(monster);
   updateStatTable(monster);
 }
 
 // ===== イベント =====
-monsterSelect.addEventListener("change", updateAll);
-lvInput.addEventListener("input", updateAll);
-showRangeCheckbox.addEventListener("change", updateAll);
+monsterSelect.addEventListener("change",updateAll);
+lvInput.addEventListener("input",updateAll);
+showRange.addEventListener("change",updateAll);
 
 // ===== 初期化 =====
 createEmptyTables();
