@@ -15,8 +15,8 @@ body {
   padding: 8px;
 }
 
-h1 { text-align: center; margin-bottom: 6px; font-size: 20px; }
-h2 { text-align: center; margin-bottom: 6px; font-weight: normal; font-size: 16px; }
+h1 { text-align: center; font-size: 20px; margin-bottom: 6px; }
+h2 { text-align: center; font-size: 16px; margin-bottom: 6px; font-weight: normal; }
 .note { text-align: center; font-size: 11px; color: #ccc; margin-bottom: 10px; }
 
 .panel {
@@ -55,14 +55,12 @@ input.calcInput {
   font-size: 13px;
 }
 
-/* スピンなし */
 input.noSpin::-webkit-outer-spin-button,
 input.noSpin::-webkit-inner-spin-button { -webkit-appearance: none; margin:0; }
 input.noSpin { -moz-appearance: textfield; }
 
 .result { color: #66ccff; font-weight: bold; font-size: 13px; }
 
-/* スマホ調整 */
 @media (max-width: 480px) {
   table { font-size: 13px; }
   input.calcInput { width: 60px; font-size: 13px; padding: 3px; }
@@ -72,9 +70,10 @@ input.noSpin { -moz-appearance: textfield; }
 </head>
 <body>
 
-<h1>LP耐性吸収計算君</h1>
-<div class="note">※計算式精査中のため事前に吸収実験を行うことを推奨</div>
+<h1>指数計算君</h1>
+<div class="note">※計算式は精査中のため事前の吸収実験を推奨</div>
 
+<!-- LP計算 -->
 <h2>LP計算</h2>
 <div class="panel">
   <table>
@@ -101,6 +100,7 @@ input.noSpin { -moz-appearance: textfield; }
   </table>
 </div>
 
+<!-- 耐性計算 -->
 <h2>耐性計算</h2>
 <div class="panel">
   <table>
@@ -127,6 +127,7 @@ input.noSpin { -moz-appearance: textfield; }
   </table>
 </div>
 
+<!-- 耐性計算Ⅱ -->
 <h2>耐性計算Ⅱ</h2>
 <div class="panel">
   <table>
@@ -172,41 +173,41 @@ input.noSpin { -moz-appearance: textfield; }
 <script>
 // --- LP計算 ---
 function updateLP1() {
-  const a = Number(document.getElementById("lp1Absorber").value) || 0;
-  const b = Number(document.getElementById("lp1Absorbed").value) || 0;
+  const a = Number(document.getElementById("lp1Absorber").value)||0;
+  const b = Number(document.getElementById("lp1Absorbed").value)||0;
   const result = Math.round(Math.pow(a*a*b,0.333));
   document.getElementById("lp1Result").textContent = result;
 }
 function updateLP2() {
-  const a = Number(document.getElementById("lp2Absorber").value) || 0;
-  const lp = Number(document.getElementById("lp2ResultInput").value) || 0;
-  const b = a!==0 ? Math.round(Math.pow(lp-0.499,3)/(a*a)) : 0;
+  const a = Number(document.getElementById("lp2Absorber").value)||0;
+  const lp = Number(document.getElementById("lp2ResultInput").value)||0;
+  const b = a!==0 ? Math.ceil(Math.pow(lp-0.499,3.003)/(a*a)) : 0;
   document.getElementById("lp2Absorbed").textContent = b;
 }
 function updateLP3() {
-  const b = Number(document.getElementById("lp3Absorbed").value) || 0;
-  const lp = Number(document.getElementById("lp3ResultInput").value) || 0;
-  const a = b!==0 ? Math.round(Math.pow(lp-0.499,3)/b) : 0;
+  const b = Number(document.getElementById("lp3Absorbed").value)||0;
+  const lp = Number(document.getElementById("lp3ResultInput").value)||0;
+  const a = b!==0 ? Math.round(Math.sqrt(Math.pow(lp-0.499,3.003)/b)) : 0;
   document.getElementById("lp3Absorber").textContent = a;
 }
 
 // --- 耐性計算 ---
 function updateRes1() {
-  const a = Number(document.getElementById("res1Absorber").value) || 0;
-  const b = Number(document.getElementById("res1Absorbed").value) || 0;
+  const a = Number(document.getElementById("res1Absorber").value)||0;
+  const b = Number(document.getElementById("res1Absorbed").value)||0;
   const result = Math.round(Math.pow((a+1000)*(a+1000)*(b+1000),0.333)-1000);
   document.getElementById("res1Result").textContent = result;
 }
 function updateRes2() {
-  const a = Number(document.getElementById("res2Absorber").value) || 0;
-  const r = Number(document.getElementById("res2ResultInput").value) || 0;
-  const b = a!==0 ? Math.round(Math.pow(r+1000,3.003)/((a+1000)*(a+1000))-1000) : 0;
+  const a = Number(document.getElementById("res2Absorber").value)||0;
+  const r = Number(document.getElementById("res2ResultInput").value)||0;
+  const b = a!==0 ? Math.ceil(Math.pow(r+1000,3.003)/((a+1000)*(a+1000))-1000) : 0;
   document.getElementById("res2Absorbed").textContent = b;
 }
 function updateRes3() {
-  const b = Number(document.getElementById("res3Absorbed").value) || 0;
-  const r = Number(document.getElementById("res3ResultInput").value) || 0;
-  const a = b!==0 ? Math.round(Math.pow(r+1000,3.003)/((b+1000))-1000) : 0;
+  const b = Number(document.getElementById("res3Absorbed").value)||0;
+  const r = Number(document.getElementById("res3ResultInput").value)||0;
+  const a = b!==0 ? Math.round(Math.sqrt(Math.pow(r+1000,3.003)/(b+1000))-1000) : 0;
   document.getElementById("res3Absorber").textContent = a;
 }
 
@@ -238,6 +239,5 @@ document.getElementById("res3ResultInput").addEventListener("input", updateRes3)
   document.getElementById(`${id}Absorbed`).addEventListener("input",()=>updateRes2II(id));
 });
 </script>
-
 </body>
 </html>
