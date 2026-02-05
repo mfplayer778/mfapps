@@ -187,6 +187,13 @@ td {
     <input class="lvInput" id="lvInput" type="number" min="1" placeholder="レベルを入力">
   </div>
 
+  <!-- 幅表示チェックボックス -->
+  <div style="margin-bottom:6px;">
+    <label style="font-size:17px;">
+      <input type="checkbox" id="showRangeCheckbox"> ステータスの下限～上限を表示する
+    </label>
+  </div>
+
   <table>
     <tbody id="statTable"></tbody>
   </table>
@@ -282,7 +289,6 @@ const LABEL_MAP = {
   "闇": "闇耐性"
 };
 
-// 耐性＆回復量＆LP（指数のまま）
 const FIXED_KEYS = ["回復量","火","氷","光","闇","LP"];
 
 // ===== DOM =====
@@ -290,6 +296,7 @@ const monsterSelect = document.getElementById("monsterSelect");
 const indexTable = document.getElementById("indexTable");
 const statTable = document.getElementById("statTable");
 const lvInput = document.getElementById("lvInput");
+const showRangeCheckbox = document.getElementById("showRangeCheckbox");
 
 // ===== 表を初期で作る（空表示） =====
 function createEmptyTables(){
@@ -372,44 +379,78 @@ function updateIndexTable(monster){
   });
 }
 
+// ===== ステータス幅計算 =====
+function getStatRange(key, value){
+  const num = Number(value);
+  if(isNaN(num)) return null;
+
+  if(key === "LP") return null;
+
+  let min, max;
+  if(["HP","攻撃","敏捷","魔回","SP","防御","魔攻","魔防"].includes(key)){
+    min = Math.floor(num * 0.95);
+    max = Math.ceil(num * 1.05);
+  } else if(["回復量","火","氷","光","闇"].includes(key)){
+    min = Math.floor(num * 0.8);
+    max = Math.ceil(num * 1.2);
+  } else {
+    return null;
+  }
+
+  return `${min}~${max}`;
+}
+
 // ===== ステータス計算更新 =====
 function updateStatTable(monster){
   const lv = Number(lvInput.value);
+  const showRange = showRangeCheckbox.checked;
 
   document.querySelectorAll('[data-type="stat"]').forEach(td => {
     const key = td.dataset.key;
 
     if(!monster){
-      td.textContent = "-";
+      td.innerHTML = "-";
       td.className = "valueCol value";
       return;
     }
 
-    // 耐性と回復量とLPは指数そのまま（計算しない）
+    // 耐性と回復量とLPは指数そのまま
     if(FIXED_KEYS.includes(key)){
       const fixedVal = Number(monster[key]);
-      td.textContent = formatPlus(key, fixedVal);
+      td.innerHTML = formatPlus(key, fixedVal);
+if(showRange && key !== "LP") {
+  const range = getStatRange(key, fixedVal);
+  if(range) td.innerHTML += `<br><span style="font-size:12px;color:#ffdd55;">(${range})</span>`;
+}
+
       td.className = "valueCol value " + getColorClass(key, fixedVal);
       return;
     }
 
     // レベル未入力なら計算できない
     if(isNaN(lv) || lv <= 0){
-      td.textContent = "-";
+      td.innerHTML = "-";
       td.className = "valueCol value";
       return;
     }
 
-    // 基本ステータス計算（四捨五入）
     const base = Number(monster[key]);
     if(isNaN(base)){
-      td.textContent = "-";
+      td.innerHTML = "-";
       td.className = "valueCol value";
       return;
     }
 
     const statValue = Math.round(base * (lv + 9));
-    td.textContent = String(statValue);
+    td.innerHTML = String(statValue);
+
+// 幅表示
+if(showRange){
+  const range = getStatRange(key, statValue);
+  if(range) td.innerHTML += `<br><span style="font-size:12px;color:#ffdd55;">(${range})</span>`;
+}
+
+
     td.className = "valueCol value";
   });
 }
@@ -442,6 +483,7 @@ function updateAll(){
 // ===== イベント =====
 monsterSelect.addEventListener("change", updateAll);
 lvInput.addEventListener("input", updateAll);
+showRangeCheckbox.addEventListener("change", updateAll);
 
 // ===== 初期化 =====
 createEmptyTables();
