@@ -187,7 +187,7 @@ function updateLP2() {
 function updateLP3() {
   const b = Number(document.getElementById("lp3Absorbed").value)||0;
   const lp = Number(document.getElementById("lp3ResultInput").value)||0;
-  const a = b!==0 ? Math.round(Math.sqrt(Math.pow(lp-0.499,3.003)/b)) : 0;
+  const a = b!==0 ? Math.ceil(Math.sqrt(Math.pow(lp-0.499,3.003)/b)) : 0;
   document.getElementById("lp3Absorber").textContent = a;
 }
 
@@ -207,7 +207,7 @@ function updateRes2() {
 function updateRes3() {
   const b = Number(document.getElementById("res3Absorbed").value)||0;
   const r = Number(document.getElementById("res3ResultInput").value)||0;
-  const a = b!==0 ? Math.round(Math.sqrt(Math.pow(r+1000,3.003)/(b+1000))-1000) : 0;
+  const a = b!==0 ? Math.ceil(Math.sqrt(Math.pow(r+1000,3.003)/(b+1000))-1000) : 0;
   document.getElementById("res3Absorber").textContent = a;
 }
 
@@ -241,4 +241,3 @@ document.getElementById("res3ResultInput").addEventListener("input", updateRes3)
 </script>
 </body>
 </html>
-
