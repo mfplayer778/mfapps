@@ -61,7 +61,6 @@ td {
 /* 入力欄 */
 input.statInput, input.lvInput {
   width: 100%;
-  max-width: 100px;
   background: #1e1e2f;
   color: #fff;
   border: none;
@@ -87,7 +86,7 @@ input.lvInput::-webkit-inner-spin-button {
   font-size: 16px;
 }
 
-/* リセットボタン（回復量測定君風） */
+/* リセットボタン */
 button.resetBtn {
   width: 100%;
   height: 48px;
@@ -106,7 +105,7 @@ button.resetBtn:active {
 /* スマホ対応 */
 @media (max-width: 480px) {
   table { font-size: 14px; }
-  input.statInput, input.lvInput { padding: 5px; font-size: 14px; max-width: 70px; }
+  input.statInput, input.lvInput { padding: 5px; font-size: 14px; }
   td { min-height: 36px; }
 }
 </style>
@@ -120,6 +119,12 @@ button.resetBtn:active {
 <div class="panel">
   <div class="table-title">ステータス</div>
   <table>
+    <colgroup>
+      <col style="width:15%">
+      <col style="width:35%">
+      <col style="width:15%">
+      <col style="width:35%">
+    </colgroup>
     <tbody id="statTable"></tbody>
   </table>
 </div>
@@ -128,6 +133,12 @@ button.resetBtn:active {
 <div class="panel">
   <div class="table-title">指数計算結果</div>
   <table>
+    <colgroup>
+      <col style="width:15%">
+      <col style="width:35%">
+      <col style="width:15%">
+      <col style="width:35%">
+    </colgroup>
     <tbody id="resultTable"></tbody>
   </table>
 </div>
@@ -146,7 +157,6 @@ function createStatTable() {
   for (let i = 0; i < 4; i++) {
     const tr = document.createElement("tr");
 
-    // 左列
     let tdName = document.createElement("td");
     tdName.textContent = stats[i];
     tr.appendChild(tdName);
@@ -162,7 +172,6 @@ function createStatTable() {
     tdInput.appendChild(inputLeft);
     tr.appendChild(tdInput);
 
-    // 右列
     tdName = document.createElement("td");
     tdName.textContent = stats[i+4];
     tr.appendChild(tdName);
@@ -181,13 +190,13 @@ function createStatTable() {
     tbody.appendChild(tr);
   }
 
-  // LV入力行
   const trLv = document.createElement("tr");
-  let tdLvLabel = document.createElement("td");
+
+  const tdLvLabel = document.createElement("td");
   tdLvLabel.textContent = "レベル";
   trLv.appendChild(tdLvLabel);
 
-  let tdLvInput = document.createElement("td");
+  const tdLvInput = document.createElement("td");
   const inputLv = document.createElement("input");
   inputLv.type = "number";
   inputLv.min = 1;
@@ -197,7 +206,6 @@ function createStatTable() {
   tdLvInput.appendChild(inputLv);
   trLv.appendChild(tdLvInput);
 
-  // 右列は空セル
   const tdEmpty = document.createElement("td");
   tdEmpty.colSpan = 2;
   trLv.appendChild(tdEmpty);
@@ -205,7 +213,7 @@ function createStatTable() {
   tbody.appendChild(trLv);
 }
 
-/* 結果表生成（4x4固定） */
+/* 結果表生成 */
 function createResultTable() {
   const tbody = document.getElementById("resultTable");
   tbody.innerHTML = "";
@@ -213,7 +221,6 @@ function createResultTable() {
   for (let i = 0; i < 4; i++) {
     const tr = document.createElement("tr");
 
-    // 左列
     let tdName = document.createElement("td");
     tdName.textContent = stats[i];
     tr.appendChild(tdName);
@@ -224,7 +231,6 @@ function createResultTable() {
     tdResult.textContent = "0.0";
     tr.appendChild(tdResult);
 
-    // 右列
     tdName = document.createElement("td");
     tdName.textContent = stats[i+4];
     tr.appendChild(tdName);
@@ -248,26 +254,24 @@ function updateResults() {
     const idx = input.dataset.index;
     const val = Number(input.value);
     const resultTd = document.querySelector(`.result[data-index="${idx}"]`);
-    if (input.value === "" || isNaN(val)) {
-      resultTd.textContent = "0.0";
-    } else {
-      resultTd.textContent = (val / (lv + 9)).toFixed(2);
-    }
+    resultTd.textContent =
+      input.value === "" || isNaN(val)
+        ? "0.0"
+        : (val / (lv + 9)).toFixed(2);
   });
 }
 
-/* リセット処理 */
+/* リセット */
 function resetAll() {
-  document.querySelectorAll(".statInput, .lvInput").forEach(input => input.value = "");
+  document.querySelectorAll(".statInput, .lvInput").forEach(i => i.value = "");
   document.querySelectorAll(".result").forEach(td => td.textContent = "0.0");
 }
 
-/* 初期生成 */
+/* 初期化 */
 createStatTable();
 createResultTable();
 updateResults();
 
-/* イベント */
 document.getElementById("resetBtn").addEventListener("click", resetAll);
 </script>
 
