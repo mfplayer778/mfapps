@@ -30,6 +30,12 @@ a.appLink:hover {
   background: #3a8bdc;
 }
 
+/* 鍵アイコンを DB のみに付与 */
+a.appLink.lock::before {
+  content: "🔒 ";
+  margin-right: 6px;
+}
+
 /* 合言葉用オーバーレイ */
 #overlay {
   position: fixed;
@@ -113,8 +119,8 @@ a.appLink:hover {
 <a href="app6.html" class="appLink">レベル技判定君</a>
 <a href="app7.html" class="appLink">LP耐性吸収計算君</a>
 
-<!-- app8だけ合言葉必須 -->
-<a href="#" class="appLink" onclick="openGate()">DB</a>
+<!-- app8だけ合言葉必須、鍵アイコン付与 -->
+<a href="#" class="appLink lock" onclick="openGate()">DB</a>
 
 <!-- 合言葉入力 -->
 <div id="overlay">
@@ -131,7 +137,12 @@ a.appLink:hover {
 
 <script>
 const PASSWORD = "185";
-const TARGET_PAGE = "app8.html";
+const TARGET_PAGE = "app185.html";
+
+// ページ読み込みや戻る時にオーバーレイ非表示
+window.addEventListener("pageshow", () => {
+  document.getElementById("overlay").style.display = "none";
+});
 
 function openGate(){
   document.getElementById("pw").value = "";
@@ -146,7 +157,6 @@ function closeGate(){
 function check(){
   const v = document.getElementById("pw").value;
   if(v === PASSWORD){
-    localStorage.setItem("app8_ok","1");
     location.href = TARGET_PAGE;
   } else {
     alert("合言葉が違います");
