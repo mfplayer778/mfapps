@@ -58,10 +58,9 @@ td {
   vertical-align: middle;
 }
 
-/* HP/SP列を少し狭く、結果列を広く */
-td:nth-child(1), td:nth-child(3) { width: 70px; } /* ステータス名列 */
-td:nth-child(2), td:nth-child(4) { width: 100px; } /* 入力列 */
-td.result { width: 120px; }
+/* 列幅を統一 */
+td.col-width-1, td.col-width-3 { width: 70px; }   /* ステータス名列 */
+td.col-width-2, td.col-width-4 { width: 100px; }  /* 入力 / 結果列 */
 
 /* レベルラベル改行なし */
 td.levelLabel {
@@ -159,9 +158,11 @@ function createStatTable() {
     // 左列
     let tdName = document.createElement("td");
     tdName.textContent = stats[i];
+    tdName.className = "col-width-1";
     tr.appendChild(tdName);
 
     let tdInput = document.createElement("td");
+    tdInput.className = "col-width-2";
     const inputLeft = document.createElement("input");
     inputLeft.type = "number";
     inputLeft.min = 0;
@@ -175,9 +176,11 @@ function createStatTable() {
     // 右列
     tdName = document.createElement("td");
     tdName.textContent = stats[i+4];
+    tdName.className = "col-width-3";
     tr.appendChild(tdName);
 
     tdInput = document.createElement("td");
+    tdInput.className = "col-width-4";
     const inputRight = document.createElement("input");
     inputRight.type = "number";
     inputRight.min = 0;
@@ -195,10 +198,11 @@ function createStatTable() {
   const trLv = document.createElement("tr");
   let tdLvLabel = document.createElement("td");
   tdLvLabel.textContent = "レベル";
-  tdLvLabel.className = "levelLabel"; // 改行防止
+  tdLvLabel.className = "levelLabel col-width-1"; // 改行防止 + 幅統一
   trLv.appendChild(tdLvLabel);
 
   let tdLvInput = document.createElement("td");
+  tdLvInput.className = "col-width-2";
   const inputLv = document.createElement("input");
   inputLv.type = "number";
   inputLv.min = 1;
@@ -211,6 +215,7 @@ function createStatTable() {
   // 右列は空セル
   const tdEmpty = document.createElement("td");
   tdEmpty.colSpan = 2;
+  tdEmpty.className = "col-width-3"; // 幅揃え
   trLv.appendChild(tdEmpty);
 
   tbody.appendChild(trLv);
@@ -227,10 +232,11 @@ function createResultTable() {
     // 左列
     let tdName = document.createElement("td");
     tdName.textContent = stats[i];
+    tdName.className = "col-width-1";
     tr.appendChild(tdName);
 
     let tdResult = document.createElement("td");
-    tdResult.className = "result";
+    tdResult.className = "result col-width-2";
     tdResult.dataset.index = i;
     tdResult.textContent = "0.0";
     tr.appendChild(tdResult);
@@ -238,10 +244,11 @@ function createResultTable() {
     // 右列
     tdName = document.createElement("td");
     tdName.textContent = stats[i+4];
+    tdName.className = "col-width-3";
     tr.appendChild(tdName);
 
     tdResult = document.createElement("td");
-    tdResult.className = "result";
+    tdResult.className = "result col-width-4";
     tdResult.dataset.index = i+4;
     tdResult.textContent = "0.0";
     tr.appendChild(tdResult);
