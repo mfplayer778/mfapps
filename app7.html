@@ -40,10 +40,8 @@ th, td {
   padding: 6px;
   text-align: center;
   vertical-align: middle;
-  min-height: 36px;
 }
 
-/* 計算式・項目列を狭く */
 .colFormula {
   width: 56px;
   min-width: 56px;
@@ -63,18 +61,7 @@ input.calcInput {
   font-size: 13px;
 }
 
-input.noSpin::-webkit-outer-spin-button,
-input.noSpin::-webkit-inner-spin-button { -webkit-appearance: none; margin:0; }
-input.noSpin { -moz-appearance: textfield; }
-
 .result { color: #66ccff; font-weight: bold; }
-
-@media (max-width: 480px) {
-  .colFormula {
-    width: 52px;
-    min-width: 52px;
-  }
-}
 </style>
 </head>
 <body>
@@ -82,7 +69,7 @@ input.noSpin { -moz-appearance: textfield; }
 <h1>LP耐性吸収計算君</h1>
 <div class="note">
   ※計算式は精査中のため事前の吸収実験を推奨<br>
-  ※②③では吸収後の目標値を入力し、吸収する側/される側の必要値を逆算
+  ※②③では吸収後の目標値に対して、吸収する側／される側に必要な値の逆算が可能
 </div>
 
 <!-- LP計算 -->
@@ -99,17 +86,17 @@ input.noSpin { -moz-appearance: textfield; }
   <td class="colFormula">①</td>
   <td><input type="number" class="calcInput" id="lp1Absorber" placeholder="数値入力"></td>
   <td><input type="number" class="calcInput" id="lp1Absorbed" placeholder="数値入力"></td>
-  <td class="result" id="lp1Result">0</td>
+  <td class="result" id="lp1Result">計算中</td>
 </tr>
 <tr>
   <td class="colFormula">②</td>
   <td><input type="number" class="calcInput" id="lp2Absorber" placeholder="数値入力"></td>
-  <td class="result" id="lp2Absorbed">0</td>
+  <td class="result" id="lp2Absorbed">計算中</td>
   <td><input type="number" class="calcInput" id="lp2ResultInput" placeholder="数値入力"></td>
 </tr>
 <tr>
   <td class="colFormula">③</td>
-  <td class="result" id="lp3Absorber">0</td>
+  <td class="result" id="lp3Absorber">計算中</td>
   <td><input type="number" class="calcInput" id="lp3Absorbed" placeholder="数値入力"></td>
   <td><input type="number" class="calcInput" id="lp3ResultInput" placeholder="数値入力"></td>
 </tr>
@@ -128,21 +115,21 @@ input.noSpin { -moz-appearance: textfield; }
 </tr>
 <tr>
   <td class="colFormula">①</td>
-  <td><input type="number" class="calcInput noSpin" id="res1Absorber" placeholder="数値入力"></td>
-  <td><input type="number" class="calcInput noSpin" id="res1Absorbed" placeholder="数値入力"></td>
-  <td class="result" id="res1Result">0</td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res1Absorber" placeholder="数値入力"></td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res1Absorbed" placeholder="数値入力"></td>
+  <td class="result" id="res1Result">計算中</td>
 </tr>
 <tr>
   <td class="colFormula">②</td>
-  <td><input type="number" class="calcInput noSpin" id="res2Absorber" placeholder="数値入力"></td>
-  <td class="result" id="res2Absorbed">0</td>
-  <td><input type="number" class="calcInput noSpin" id="res2ResultInput" placeholder="数値入力"></td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res2Absorber" placeholder="数値入力"></td>
+  <td class="result" id="res2Absorbed">計算中</td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res2ResultInput" placeholder="数値入力"></td>
 </tr>
 <tr>
   <td class="colFormula">③</td>
-  <td class="result" id="res3Absorber">0</td>
-  <td><input type="number" class="calcInput noSpin" id="res3Absorbed" placeholder="数値入力"></td>
-  <td><input type="number" class="calcInput noSpin" id="res3ResultInput" placeholder="数値入力"></td>
+  <td class="result" id="res3Absorber">計算中</td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res3Absorbed" placeholder="数値入力"></td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res3ResultInput" placeholder="数値入力"></td>
 </tr>
 </table>
 </div>
@@ -159,42 +146,93 @@ input.noSpin { -moz-appearance: textfield; }
 </tr>
 <tr>
   <td class="colFormula">火耐性</td>
-  <td><input type="number" class="calcInput noSpin" id="res2_1Absorber" placeholder="数値入力"></td>
-  <td><input type="number" class="calcInput noSpin" id="res2_1Absorbed" placeholder="数値入力"></td>
-  <td class="result" id="res2_1Result">0</td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res2_1Absorber" placeholder="数値入力"></td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res2_1Absorbed" placeholder="数値入力"></td>
+  <td class="result" id="res2_1Result">計算中</td>
 </tr>
 <tr>
   <td class="colFormula">氷耐性</td>
-  <td><input type="number" class="calcInput noSpin" id="res2_2Absorber" placeholder="数値入力"></td>
-  <td><input type="number" class="calcInput noSpin" id="res2_2Absorbed" placeholder="数値入力"></td>
-  <td class="result" id="res2_2Result">0</td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res2_2Absorber" placeholder="数値入力"></td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res2_2Absorbed" placeholder="数値入力"></td>
+  <td class="result" id="res2_2Result">計算中</td>
 </tr>
 <tr>
   <td class="colFormula">光耐性</td>
-  <td><input type="number" class="calcInput noSpin" id="res2_3Absorber" placeholder="数値入力"></td>
-  <td><input type="number" class="calcInput noSpin" id="res2_3Absorbed" placeholder="数値入力"></td>
-  <td class="result" id="res2_3Result">0</td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res2_3Absorber" placeholder="数値入力"></td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res2_3Absorbed" placeholder="数値入力"></td>
+  <td class="result" id="res2_3Result">計算中</td>
 </tr>
 <tr>
   <td class="colFormula">闇耐性</td>
-  <td><input type="number" class="calcInput noSpin" id="res2_4Absorber" placeholder="数値入力"></td>
-  <td><input type="number" class="calcInput noSpin" id="res2_4Absorbed" placeholder="数値入力"></td>
-  <td class="result" id="res2_4Result">0</td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res2_4Absorber" placeholder="数値入力"></td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res2_4Absorbed" placeholder="数値入力"></td>
+  <td class="result" id="res2_4Result">計算中</td>
 </tr>
 <tr>
   <td class="colFormula">回復量</td>
-  <td><input type="number" class="calcInput noSpin" id="res2_5Absorber" placeholder="数値入力"></td>
-  <td><input type="number" class="calcInput noSpin" id="res2_5Absorbed" placeholder="数値入力"></td>
-  <td class="result" id="res2_5Result">0</td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res2_5Absorber" placeholder="数値入力"></td>
+  <td><input type="text" inputmode="numeric" class="calcInput" id="res2_5Absorbed" placeholder="数値入力"></td>
+  <td class="result" id="res2_5Result">計算中</td>
 </tr>
 </table>
 </div>
 
-<!-- JS（元コード完全維持） -->
 <script>
-/* 元のJSそのまま */
+const v=id=>document.getElementById(id).value;
+const n=id=>Number(v(id));
+
+function calcIf(ids, fn, out){
+  if(ids.some(id=>v(id)==="")){
+    out.textContent="計算中"; return;
+  }
+  out.textContent=fn();
+}
+
+// LP
+function updateLP1(){
+  calcIf(["lp1Absorber","lp1Absorbed"],
+    ()=>Math.round(Math.pow(n("lp1Absorber")**2*n("lp1Absorbed"),0.333)), lp1Result);
+}
+function updateLP2(){
+  calcIf(["lp2Absorber","lp2ResultInput"],
+    ()=>Math.ceil(Math.pow(n("lp2ResultInput")-0.499,3.003)/(n("lp2Absorber")**2)), lp2Absorbed);
+}
+function updateLP3(){
+  calcIf(["lp3Absorbed","lp3ResultInput"],
+    ()=>Math.ceil(Math.sqrt(Math.pow(n("lp3ResultInput")-0.499,3.003)/n("lp3Absorbed"))), lp3Absorber);
+}
+
+// 耐性
+function updateRes1(){
+  calcIf(["res1Absorber","res1Absorbed"],
+    ()=>Math.round(Math.pow((n("res1Absorber")+1000)**2*(n("res1Absorbed")+1000),0.333)-1000), res1Result);
+}
+function updateRes2(){
+  calcIf(["res2Absorber","res2ResultInput"],
+    ()=>Math.ceil(Math.pow(n("res2ResultInput")+1000,3.003)/((n("res2Absorber")+1000)**2)-1000), res2Absorbed);
+}
+function updateRes3(){
+  calcIf(["res3Absorbed","res3ResultInput"],
+    ()=>Math.ceil(Math.sqrt(Math.pow(n("res3ResultInput")+1000,3.003)/(n("res3Absorbed")+1000))-1000), res3Absorber);
+}
+
+// 耐性Ⅱ
+["res2_1","res2_2","res2_3","res2_4","res2_5"].forEach(id=>{
+  window["u_"+id]=()=>{
+    calcIf([`${id}Absorber`,`${id}Absorbed`],
+      ()=>Math.round(Math.pow((n(`${id}Absorber`)+1000)**2*(n(`${id}Absorbed`)+1000),0.333)-1000),
+      document.getElementById(`${id}Result`));
+  };
+});
+
+document.querySelectorAll("input").forEach(el=>{
+  el.addEventListener("input",()=>{
+    updateLP1(); updateLP2(); updateLP3();
+    updateRes1(); updateRes2(); updateRes3();
+    ["res2_1","res2_2","res2_3","res2_4","res2_5"].forEach(id=>window["u_"+id]());
+  });
+});
 </script>
 
 </body>
 </html>
-
