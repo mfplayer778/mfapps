@@ -48,8 +48,8 @@ th {
 }
 
 input.lvInput {
-  width: 100%;      /* セル幅に合わせる */
-  max-width: 80px;  /* PC用 */
+  width: 100%;
+  max-width: 80px;
   box-sizing: border-box;
   padding: 4px;
   border-radius: 4px;
@@ -60,7 +60,6 @@ input.lvInput {
   font-size: 14px;
 }
 
-/* スマホでもスピンボタン表示 */
 input.lvInput::-webkit-inner-spin-button,
 input.lvInput::-webkit-outer-spin-button {
   -webkit-appearance: inner-spin-button;
@@ -74,7 +73,7 @@ input.lvInput::-webkit-outer-spin-button {
 th label {
   font-size: 12px;
   display: flex;
-  flex-direction: column;  /* 技名改行 & チェックボックス下 */
+  flex-direction: column;
   align-items: center;
   gap: 2px;
 }
@@ -87,7 +86,6 @@ th label {
   text-align: center;
 }
 
-/* スマホ対応 */
 @media (max-width: 480px) {
   table { font-size: 12px; }
   th, td { padding: 4px; }
@@ -115,7 +113,7 @@ th label {
 
 <h2>レベル技対応表（Lv400～800）</h2>
 <div class="note">
-  各技のボックスにチェックを入れると回避レベルのみ表示できます。
+  各技のボックスにチェックを入れると、対応するレベルの行が黒色でハイライトされます。
 </div>
 
 <div class="panel">
@@ -140,7 +138,7 @@ const skills = [
   { mod: 7, text: "ﾌﾚｱｰ" }
 ];
 
-// 任意入力表 初期生成（4行）
+// 任意入力表 初期生成
 function createInputTable() {
   const tb = document.getElementById("inputTable");
   tb.innerHTML = "";
@@ -204,22 +202,33 @@ function createMainTable() {
   }
 }
 
-// フィルタ：チェックON → 発動レベルを除外
+// フィルタ：チェックON → 該当レベル行を黒くハイライト
 function applyFilter() {
   const rules = [...document.querySelectorAll("th input")];
+  const table = document.getElementById("skillTable");
+  const rows = table.querySelectorAll("tr");
 
-  document.querySelectorAll("#skillTable tr").forEach((tr, i) => {
-    if (i === 0) return;
-    const lv = Number(tr.dataset.lv);
+  // まず全行の背景をリセット
+  rows.forEach(tr => {
+    tr.querySelectorAll("td").forEach(td => td.style.background = "");
+  });
 
-    const show = rules.every(r =>
-      !r.checked || lv % Number(r.dataset.mod) !== 0
-    );
+  rules.forEach(r => {
+    if (!r.checked) return;
+    const mod = Number(r.dataset.mod);
 
-    tr.style.display = show ? "" : "none";
+    rows.forEach((tr, i) => {
+      if (i === 0) return; // ヘッダーは除外
+      const lv = Number(tr.dataset.lv);
+      if (lv % mod === 0) {
+        // 該当行全体を黒に
+        tr.querySelectorAll("td").forEach(td => td.style.background = "#000");
+      }
+    });
   });
 }
 
+// イベント
 document.querySelectorAll("th input").forEach(c => c.addEventListener("change", applyFilter));
 
 createInputTable();
