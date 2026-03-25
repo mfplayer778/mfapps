@@ -41,6 +41,7 @@ input {
   align-items: center;
   gap: 10px;
   white-space: nowrap;
+  flex-wrap: wrap; /* 小画面では折り返し */
 }
 .radio-inline label {
   display: inline-flex;
@@ -68,6 +69,14 @@ button{
 
 .table2 th{
   background:#2f6f6f;
+}
+
+/* ★スマホ対応 */
+@media (max-width:480px) {
+  table { font-size:14px; }
+  input { font-size:14px; padding:5px; width:90%; }
+  td, th { min-height:36px; padding:6px; }
+  .radio-inline { gap:6px; }
 }
 </style>
 </head>
@@ -139,7 +148,7 @@ button{
 
 <table class="table1">
 <tr>
-<th>）</th>
+<th></th>
 <th>防御最大</th>
 <th>防御標準</th>
 <th>防御最小</th>
