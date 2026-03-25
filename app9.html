@@ -3,104 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ブラスト計算君（参考データ付き）</title>
+<title>ブラスト計算君</title>
 
 <style>
 * { box-sizing: border-box; }
 body { font-family: system-ui, -apple-system; background:#1e1e2f; color:#fff; margin:0; padding:12px; }
-
 h1 { text-align:center; margin-bottom:12px; font-size:20px; }
-
 .panel { background:#2b2b44; padding:12px; border-radius:8px; margin-bottom:20px; }
-
-.table-title,.sub-title{
-  text-align:center;
-  font-weight:bold;
-  font-size:16px;
-  margin:12px 0 6px;
-}
-
+.table-title,.sub-title{ text-align:center; font-weight:bold; font-size:16px; margin:12px 0 6px; }
 table { border-collapse: collapse; width:100%; table-layout: fixed; margin-top:10px; }
 td, th { border:1px solid #555; padding:8px; text-align:center; vertical-align: middle; }
-
-/* 入力欄中央揃え */
-input { 
-  width:80%; 
-  background:#1e1e2f; 
-  color:#fff; 
-  border:none; 
-  padding:6px; 
-  text-align:center; 
-  margin:auto; 
-  display:block; 
-}
-
-/* ラジオボタン横並びを安定 */
-.radio-inline {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  white-space: nowrap;
-  flex-wrap: wrap; /* 小画面では折り返し */
-}
-.radio-inline label {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-}
-
+input, select { width:80%; background:#1e1e2f; color:#fff; border:none; padding:6px; text-align:center; margin:auto; display:block; }
 .result { color:#66ccff; font-weight:bold; }
 .indexVal { color:#ffff66; font-weight:bold; }
-
-button{
-  width:100%; height:50px;
-  background:#ff6666;
-  border:none;
-  border-radius:8px;
-  margin-top:30px;
-}
-
-/* 表カラー */
-.table1 th,
-.table1 td:first-child{
-  background:#4a4a8a;
-}
-
-.table2 th{
-  background:#2f6f6f;
-}
-
-/* ★スマホ対応 */
+button{ width:100%; height:50px; background:#ff6666; border:none; border-radius:8px; margin-top:30px; }
+.table1 th, .table1 td:first-child{ background:#4a4a8a; }
+.table2 th{ background:#2f6f6f; }
 @media (max-width:480px) {
   table { font-size:14px; }
-  input { font-size:14px; padding:5px; width:90%; }
+  input, select { font-size:14px; padding:5px; width:90%; }
   td, th { min-height:36px; padding:6px; }
-  .radio-inline { gap:6px; }
 }
 </style>
 </head>
-
 <body>
 
 <h1>ブラスト計算君</h1>
 
-<!-- ダメージ計算 -->
 <div class="panel">
 <div class="table-title">ダメージ計算</div>
 
 <table>
 <tr>
+<td>入力タイプ</td>
 <td>
-<span class="radio-inline">
-<span>入力タイプ：</span>
-<label><input type="radio" name="inputType" value="index" checked>指数</label>
-<label><input type="radio" name="inputType" value="status">ステータス</label>
-</span>
+<select id="inputTypeSelect">
+  <option value="index">指数</option>
+  <option value="status">ステータス</option>
+</select>
 </td>
+</tr>
+<tr>
+<td>指数またはステータス</td>
 <td><input type="number" id="inputVal" placeholder="指数またはステータス"></td>
 </tr>
-
 <tr>
 <td>レベル</td>
 <td><input type="number" id="level" placeholder="レベルを入力"></td>
@@ -117,7 +63,6 @@ button{
 </table>
 </div>
 
-<!-- 必要回数計算 -->
 <div class="panel">
 <div class="table-title">必要回数計算</div>
 
@@ -142,7 +87,6 @@ button{
 
 <div style="height:30px;"></div>
 
-<!-- 参考データ -->
 <div class="panel">
 <div class="table-title">対ジャッジ必要回数（アップあり）</div>
 
@@ -174,21 +118,22 @@ button{
 let lastDamage=0,lastDamageUp=0;
 
 function calcBlast(){
-  const type=document.querySelector('input[name="inputType"]:checked').value;
-  const val=Number(inputVal.value);
-  const level=Number(levelInput.value);
+  const type = document.getElementById("inputTypeSelect").value;
+  const val = Number(inputVal.value);
+  const level = Number(levelInput.value);
 
-  if(!val||!level){
-    blastResult.innerHTML='計算中<br><span class="indexVal">（アップあり: 0）</span>';
-    lastDamage=0;lastDamageUp=0;return;
+  if(!val || !level){
+    blastResult.innerHTML = '計算中<br><span class="indexVal">（アップあり: 0）</span>';
+    lastDamage = 0; lastDamageUp = 0;
+    return;
   }
 
-  const index=type==='status'?val/(level+9):val;
+  let index = (type === 'status') ? val / (level+9) : val;
 
-  lastDamage=Math.round((index-9)*(level+9)*1.5);
-  lastDamageUp=Math.round((index*1.5-9)*(level+9)*1.5);
+  lastDamage = Math.round((index - 9) * (level + 9) * 1.5);
+  lastDamageUp = Math.round((index * 1.5 - 9) * (level + 9) * 1.5);
 
-  blastResult.innerHTML=`${lastDamage}<br><span class="indexVal">（アップあり: ${lastDamageUp}）</span>`;
+  blastResult.innerHTML = `${lastDamage}<br><span class="indexVal">（アップあり: ${lastDamageUp}）</span>`;
 }
 
 function countHits(hp,d){
@@ -205,7 +150,6 @@ function calcNeeded(){
   }
   const n=countHits(hp,lastDamage);
   const nUp=countHits(hp,lastDamageUp);
-
   neededResult.innerHTML=`${n}<br><span class="indexVal">（アップあり: ${nUp}回）</span>`;
 }
 
@@ -221,7 +165,6 @@ function buildTable(){
     const min=Math.round((lv+9)*14.725);
     const max=Math.round((lv+9)*16.275);
     const mid=Math.round((min+max)/2);
-
     t.innerHTML+=`
 <tr>
 <td>${w[0]}</td>
@@ -234,8 +177,8 @@ function buildTable(){
 
 function resetAll(){
   document.querySelectorAll("input").forEach(i=>i.value="");
-  document.querySelector('input[value="index"]').checked=true;
-  calcBlast();calcNeeded();
+  document.getElementById("inputTypeSelect").value = "index";
+  calcBlast(); calcNeeded();
 }
 
 const inputVal=document.getElementById("inputVal");
@@ -244,9 +187,11 @@ const hpVal=document.getElementById("hpVal");
 const blastResult=document.getElementById("blastResult");
 const neededResult=document.getElementById("neededResult");
 
-document.querySelectorAll("input").forEach(i=>{
-  i.addEventListener("input",()=>{calcBlast();calcNeeded();});
+[inputVal, levelInput, hpVal].forEach(el => {
+  el.addEventListener("input",()=>{calcBlast();calcNeeded();});
 });
+
+document.getElementById("inputTypeSelect").addEventListener("change",()=>{calcBlast();calcNeeded();});
 
 buildTable();
 resetAll();
