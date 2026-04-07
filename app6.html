@@ -22,10 +22,11 @@ h1, h2 {
 
 .panel {
   background: #2b2b44;
-  padding: 12px;
+  padding: 0;
   border-radius: 8px;
   margin-bottom: 12px;
-  overflow-x: auto;
+  max-height: 500px; /* スクロール可能な高さ */
+  overflow-y: auto;  /* 縦スクロール */
 }
 
 table {
@@ -42,9 +43,11 @@ th, td {
   vertical-align: middle;
 }
 
-th {
+thead th {
+  position: sticky;
+  top: 0;
   background: #3a3a5a;
-  font-size: 14px;
+  z-index: 2;
 }
 
 input.lvInput {
@@ -97,16 +100,19 @@ th label {
 
 <h1>レベル技判定君</h1>
 
+<h2>任意入力表</h2>
 <div class="panel">
   <table>
-    <tr>
-      <th>LV</th>
-      <th>Lv2<br>毒</th>
-      <th>Lv3<br>技封印</th>
-      <th>Lv4<br>凍結</th>
-      <th>Lv5<br>ｸｫｰﾀｰ</th>
-      <th>Lv7<br>ﾌﾚｱｰ</th>
-    </tr>
+    <thead>
+      <tr>
+        <th>LV</th>
+        <th>Lv2<br>毒</th>
+        <th>Lv3<br>技封印</th>
+        <th>Lv4<br>凍結</th>
+        <th>Lv5<br>ｸｫｰﾀｰ</th>
+        <th>Lv7<br>ﾌﾚｱｰ</th>
+      </tr>
+    </thead>
     <tbody id="inputTable"></tbody>
   </table>
 </div>
@@ -118,14 +124,19 @@ th label {
 
 <div class="panel">
   <table id="skillTable">
-    <tr>
-      <th>LV</th>
-      <th><label>Lv2<br>毒<br><input type="checkbox" data-mod="2"></label></th>
-      <th><label>Lv3<br>技封印<br><input type="checkbox" data-mod="3"></label></th>
-      <th><label>Lv4<br>凍結<br><input type="checkbox" data-mod="4"></label></th>
-      <th><label>Lv5<br>ｸｫｰﾀｰ<br><input type="checkbox" data-mod="5"></label></th>
-      <th><label>Lv7<br>ﾌﾚｱｰ<br><input type="checkbox" data-mod="7"></label></th>
-    </tr>
+    <thead>
+      <tr>
+        <th>LV</th>
+        <th><label>Lv2<br>毒<br><input type="checkbox" data-mod="2"></label></th>
+        <th><label>Lv3<br>技封印<br><input type="checkbox" data-mod="3"></label></th>
+        <th><label>Lv4<br>凍結<br><input type="checkbox" data-mod="4"></label></th>
+        <th><label>Lv5<br>ｸｫｰﾀｰ<br><input type="checkbox" data-mod="5"></label></th>
+        <th><label>Lv7<br>ﾌﾚｱｰ<br><input type="checkbox" data-mod="7"></label></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- JavaScriptで行を生成 -->
+    </tbody>
   </table>
 </div>
 
@@ -185,7 +196,7 @@ function updateInputTable() {
 
 // 下表生成
 function createMainTable() {
-  const table = document.getElementById("skillTable");
+  const table = document.getElementById("skillTable").querySelector("tbody");
   for (let lv = 400; lv <= 800; lv++) {
     const tr = document.createElement("tr");
     tr.dataset.lv = lv;
