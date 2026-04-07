@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>タリ装着目役君</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  font-family: system-ui, -apple-system;
+  background: #1e1e2f;
+  color: #fff;
+  margin: 0;
+  padding: 12px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 12px;
+  font-size: 20px;
+}
+
+.panel {
+  background: #2b2b44;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-title {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+  table-layout: fixed;
+}
+
+td, th {
+  border: 1px solid #555;
+  padding: 6px;
+  text-align: center;
+}
+
+th {
+  background: #3a3a5a;
+}
+
+input {
+  width: 100%;
+  max-width: 120px;
+  background: #1e1e2f;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.result-cell {
+  font-weight: bold;
+}
+
+button {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background: #ff6666;
+  color: #000;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+/* スマホ対応 */
+@media (max-width: 480px) {
+  table {
+    font-size: 12px;
+  }
+  input {
+    padding: 4px;
+    font-size: 14px;
+    max-width: 80px;
+  }
+  td, th {
+    padding: 4px;
+  }
+  button {
+    font-size: 14px;
+    height: 40px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<h1>タリ装着目役君</h1>
+
+<div class="panel">
+  <div class="table-title">条件入力</div>
+  <table>
+    <tr>
+      <td>レベル</td>
+      <td><input type="number" id="levelInput" placeholder="レベルを入力"></td>
+    </tr>
+    <tr>
+      <td>標準指数</td>
+      <td><input type="number" id="baseIndexInput" step="0.1" placeholder="指数を入力"></td>
+    </tr>
+  </table>
+</div>
+
+<div class="panel">
+  <div class="table-title">早見表</div>
+  <table id="resultTable"></table>
+</div>
+
+<button onclick="resetAll()">リセット</button>
+
+<script>
+function generateTable() {
+  const level = Number(document.getElementById("levelInput").value);
+  const baseIndex = Number(document.getElementById("baseIndexInput").value);
+  const table = document.getElementById("resultTable");
+
+  const offsets = [];
+  for (let i = -1.0; i <= 1.0001; i += 0.2) offsets.push(Number(i.toFixed(1)));
+
+  let allValues = [];
+  let tableValues = [];
+
+  for (let p = 0; p <= 100; p += 5) {
+    let row = [];
+    offsets.forEach(offset => {
+      if (level && baseIndex) {
+        const idx = baseIndex + offset;
+        const value = Math.round((idx * (level + 9)) * (1 + p / 100));
+        row.push(value);
+        allValues.push(value);
+      } else {
+        row.push(null);
+      }
+    });
+    tableValues.push(row);
+  }
+
+  const min = Math.min(...allValues);
+  const max = Math.max(...allValues);
+  const maxStep = Math.max(1, Math.floor((max - min) / 1000));
+
+  function getColor(val) {
+    if (val === null) return "";
+    const step = Math.floor((val - min) / 1000);
+    const ratio = step / maxStep;
+
+    // グラデーション：最小値濃い水色(100,150,255) → 最大値濃いピンク(255,120,150)
+    const r = Math.floor(100 + (255-100)*ratio);
+    const g = Math.floor(150 + (120-150)*ratio);
+    const b = Math.floor(255 + (150-255)*ratio);
+
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
+  // HTML生成
+  let html = "<tr><th>タリ目安%</th>";
+  offsets.forEach(offset => {
+    let label;
+    if (baseIndex) label = (baseIndex + offset).toFixed(2);
+    else label = (offset >= 0 ? "+" : "") + offset;
+    html += `<th>${label}</th>`;
+  });
+  html += "</tr>";
+
+  tableValues.forEach((row, i) => {
+    const p = i * 5;
+    html += `<tr><th>${p}%</th>`;
+    row.forEach(val => {
+      if (val === null) html += "<td></td>";
+      else html += `<td class="result-cell" style="background:${getColor(val)}">${val}</td>`;
+    });
+    html += "</tr>";
+  });
+
+  table.innerHTML = html;
+}
+
+function resetAll() {
+  document.getElementById("levelInput").value = "";
+  document.getElementById("baseIndexInput").value = "";
+  generateTable();
+}
+
+document.getElementById("levelInput").addEventListener("input", generateTable);
+document.getElementById("baseIndexInput").addEventListener("input", generateTable);
+
+generateTable();
+</script>
+
+</body>
+</html>
