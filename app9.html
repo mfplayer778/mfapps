@@ -35,16 +35,12 @@ button{ width:100%; height:50px; background:#ff6666; border:none; border-radius:
 
 <table>
 <tr>
-<td>入力タイプ</td>
 <td>
 <select id="inputTypeSelect">
   <option value="index">指数</option>
   <option value="status">ステータス</option>
 </select>
 </td>
-</tr>
-<tr>
-<td>指数またはステータス</td>
 <td><input type="number" id="inputVal" placeholder="指数またはステータス"></td>
 </tr>
 <tr>
@@ -138,7 +134,7 @@ function calcBlast(){
   const minUp = Math.round(lastDamageUp * 0.8);
   const maxUp = Math.round(lastDamageUp * 1.2);
 
-  blastResult.innerHTML = `${lastDamage}（${min}～${max}）<br><span class="indexVal">アップ後：${lastDamageUp}（${minUp}～${maxUp}）</span>`;
+  blastResult.innerHTML = `${lastDamage}（${min}～${max}）<br><span class="indexVal">アップあり：${lastDamageUp}（${minUp}～${maxUp}）</span>`;
 }
 
 function countHits(hp,d){
@@ -156,7 +152,7 @@ function calcNeeded(){
   const n=countHits(hp,lastDamage);
   const nUp=countHits(hp,lastDamageUp);
 
-  neededResult.innerHTML=`${n}回<br><span class="indexVal">アップ後：${nUp}回</span>`;
+  neededResult.innerHTML=`${n}回<br><span class="indexVal">アップあり：${nUp}回</span>`;
 }
 
 const worlds=[
