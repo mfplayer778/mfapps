@@ -135,8 +135,9 @@ function generateTable() {
   const baseIndex = Number(document.getElementById("baseIndexInput").value);
   const table = document.getElementById("resultTable");
 
+  // ← 修正部分：-0.8～+0.8、0.2刻み
   const offsets = [];
-  for (let i = -1.0; i <= 1.0001; i += 0.2) offsets.push(Number(i.toFixed(1)));
+  for (let i = -0.8; i <= 0.8001; i += 0.2) offsets.push(Number(i.toFixed(1)));
 
   let allValues = [];
   let tableValues = [];
@@ -174,7 +175,7 @@ function generateTable() {
   }
 
   // HTML生成
-  let html = "<tr><th>タリ目安%</th>";
+  let html = "<tr><th>タリ％</th>";
   offsets.forEach(offset => {
     let label;
     if (baseIndex) label = (baseIndex + offset).toFixed(2);
