@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電太君</title>
+
+<style>
+* { box-sizing:border-box; }
+
+body{
+  margin:0;
+  background:#1e1e2f;
+  font-family:system-ui;
+  display:flex;
+  justify-content:center;
+  padding:12px;
+  color:#fff;
+}
+
+.container{
+  width:100%;
+  max-width:420px;
+}
+
+.display{
+  background:#111;
+  color:#0f0;
+  padding:12px;
+  min-height:80px;
+  border-radius:8px;
+  font-size:20px;
+  word-break:break-all;
+}
+
+/* ボタン */
+.buttons{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-top:10px;
+}
+
+button{
+  width:100%;
+  height:52px;
+  border:none;
+  border-radius:8px;
+  font-size:16px;
+  color:#fff;
+}
+
+/* 数字 */
+.num{background:#3a3a5a;}
+
+/* 紫系（機能系統） */
+.func{
+  background:#6a5acd;
+}
+
+/* 演算 */
+.operator{
+  background:#f7b733;
+  color:#000;
+}
+
+/* 削除 */
+.backspace{
+  background:#ff3b30;
+}
+
+/* イコール */
+.equal{
+  background:#4cd964;
+}
+
+/* 履歴 */
+.history{
+  margin-top:10px;
+  background:#2b2b44;
+  padding:10px;
+  border-radius:10px;
+  max-height:180px;
+  overflow-y:auto;
+}
+
+.history-item{
+  border-bottom:1px solid #555;
+  padding:6px;
+  font-size:14px;
+}
+
+/* リセット */
+.reset{
+  width:100%;
+  height:50px;
+  margin-top:10px;
+  background:#ff3b30;
+  border:none;
+  border-radius:8px;
+  color:#fff;
+  font-size:16px;
+}
+
+/* 注意書き */
+.note{
+  margin-top:10px;
+  font-size:12px;
+  color:#ffcc66;
+  line-height:1.4;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2 style="text-align:center;margin:0 0 8px;">電太君</h2>
+
+<div id="display" class="display"></div>
+
+<div class="buttons">
+
+<!-- 紫系統（機能） -->
+<button class="func" onclick="add('**2','²')">x²</button>
+<button class="func" onclick="add('Math.sqrt(','√(')">√</button>
+<button class="func" onclick="add('Math.cbrt(','∛(')">∛</button>
+<button class="backspace" onclick="backspace()">⌫</button>
+
+<button class="func" onclick="add('(','(')">(</button>
+<button class="func" onclick="add(')',')')">)</button>
+<button class="func" onclick="add('+9','+9')">+9</button>
+<button class="operator" onclick="add('/','÷')">÷</button>
+
+<!-- 数字 -->
+<button class="num" onclick="add('7','7')">7</button>
+<button class="num" onclick="add('8','8')">8</button>
+<button class="num" onclick="add('9','9')">9</button>
+<button class="operator" onclick="add('*','×')">×</button>
+
+<button class="num" onclick="add('4','4')">4</button>
+<button class="num" onclick="add('5','5')">5</button>
+<button class="num" onclick="add('6','6')">6</button>
+<button class="operator" onclick="add('-','−')">−</button>
+
+<button class="num" onclick="add('1','1')">1</button>
+<button class="num" onclick="add('2','2')">2</button>
+<button class="num" onclick="add('3','3')">3</button>
+<button class="operator" onclick="add('+','＋')">＋</button>
+
+<button class="num" onclick="add('0','0')">0</button>
+<button class="num" onclick="add('00','00')">00</button>
+<button class="num" onclick="add('.','.')">.</button>
+<button class="equal" onclick="calc()">＝</button>
+
+</div>
+
+<button class="reset" onclick="resetAll()">リセット</button>
+
+<div class="history">
+<div style="text-align:center;font-weight:bold;">計算履歴</div>
+<div id="history"></div>
+</div>
+
+<div class="note">
+※ルートや三乗根の最後に閉じカッコをつけるのを忘れずに
+</div>
+
+</div>
+
+<script>
+
+let calcExpr = "";
+let viewExpr = "";
+
+const display = document.getElementById("display");
+const history = document.getElementById("history");
+
+function render(){
+  display.innerHTML = viewExpr;
+}
+
+function add(calcV, viewV){
+  calcExpr += calcV;
+  viewExpr += viewV;
+  render();
+}
+
+function backspace(){
+  calcExpr = calcExpr.slice(0,-1);
+  viewExpr = viewExpr.slice(0,-1);
+  render();
+}
+
+function calc(){
+  try{
+    let result = eval(calcExpr);
+    result = Math.round(result*1000)/1000;
+
+    let item = document.createElement("div");
+    item.className = "history-item";
+    item.textContent = viewExpr + " = " + result;
+    history.prepend(item);
+
+    calcExpr = String(result);
+    viewExpr = String(result);
+
+    render();
+
+  }catch{
+    calcExpr = "";
+    viewExpr = "エラー";
+    render();
+  }
+}
+
+function resetAll(){
+  calcExpr = "";
+  viewExpr = "";
+  history.innerHTML = "";
+  render();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
