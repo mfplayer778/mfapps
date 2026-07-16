@@ -36,6 +36,37 @@ td { border: 1px solid #555; padding: 6px 2px; text-align: center; vertical-alig
   td.nameCol { width: 18%; }
   td.valueCol { width: 32%; }
 }
+#listTable{
+    border-collapse: separate;
+    border-spacing: 0;
+    width: max-content;
+    min-width: 100%;
+    table-layout: auto;
+}
+
+#listTable th,
+#listTable td{
+    border:1px solid #555;
+    padding:4px 8px;
+    white-space:nowrap;
+    text-align:center;
+}
+
+#listTable th{
+    position: sticky;
+    top: 0;
+    background: #353555;
+    z-index: 100;
+}
+#listTable button{
+    background:none;
+    border:none;
+    color:#fff;
+    cursor:pointer;
+    padding:0 2px;
+    font-size:12px;
+}
+
 </style>
 </head>
 
@@ -72,7 +103,18 @@ td { border: 1px solid #555; padding: 6px 2px; text-align: center; vertical-alig
     <tbody id="statTable"></tbody>
   </table>
 </div>
+<div class="panel">
+  <div class="table-title">モンスター一覧</div>
 
+<div style="overflow:auto; max-height:400px; position:relative;">
+    <table id="listTable">
+      <thead>
+        <tr id="listHead"></tr>
+      </thead>
+      <tbody id="listBody"></tbody>
+    </table>
+  </div>
+</div>
 <script>
 // ===== モンスターデータ =====
 const monsterDB = [
@@ -166,7 +208,25 @@ const monsterDB = [
 {"モンスター名":"ゴールドゴーレム","HP":"14.1","攻撃":"12.5","敏捷":"7.6","魔回":"4","SP":"10","防御":"9","魔攻":"5","魔防":"8","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"100"},
 {"モンスター名":"ラストドラゴン","HP":"10","攻撃":"14","敏捷":"50","魔回":"50","SP":"999k","防御":"14","魔攻":"13","魔防":"9","LP":"2","火":"-100","氷":"-100","光":"-100","闇":"-100","回復量":"300"},
 ];
+const LIST_COLUMNS=[
+["モンスター名","モンスター"],
+["HP","HP"],
+["攻撃","攻撃"],
+["敏捷","敏捷"],
+["魔回","魔回"],
+["SP","SP"],
+["防御","防御"],
+["魔攻","魔攻"],
+["魔防","魔防"],
+["LP","LP"],
+["火","火耐性"],
+["氷","氷耐性"],
+["光","光耐性"],
+["闇","闇耐性"],
+["回復量","回復量"]
+];
 
+let listData=[...monsterDB];
 // ===== 表の並び指定 =====
 const LEFT_COL = ["HP","攻撃","敏捷","魔回","回復量","火","氷"];
 const RIGHT_COL = ["SP","防御","魔攻","魔防","LP","光","闇"];
@@ -328,6 +388,79 @@ showRange.addEventListener("change",updateAll);
 createEmptyTables();
 initSelect();
 updateAll();
+function valueForSort(v){
+
+    if(v==="999k") return Number.MAX_SAFE_INTEGER;
+
+    let n=parseFloat(v);
+
+    if(isNaN(n)) return v;
+
+    return n;
+}
+
+function buildList(){
+
+    const head=document.getElementById("listHead");
+    const body=document.getElementById("listBody");
+
+    head.innerHTML="";
+    body.innerHTML="";
+
+    LIST_COLUMNS.forEach(c=>{
+
+        const th=document.createElement("th");
+
+        th.innerHTML=
+            c[1]+
+            ' <button onclick="sortList(\''+c[0]+'\',true)">▲</button>'+
+            '<button onclick="sortList(\''+c[0]+'\',false)">▼</button>';
+
+        head.appendChild(th);
+
+    });
+
+    listData.forEach(mon=>{
+
+        const tr=document.createElement("tr");
+
+        LIST_COLUMNS.forEach(c=>{
+
+            const td=document.createElement("td");
+
+            td.textContent=mon[c[0]];
+
+            tr.appendChild(td);
+
+        });
+
+        body.appendChild(tr);
+
+    });
+
+}
+
+function sortList(key,asc){
+
+    listData.sort((a,b)=>{
+
+        let aa=valueForSort(a[key]);
+        let bb=valueForSort(b[key]);
+
+        if(typeof aa==="string")
+            return asc
+                ? aa.localeCompare(bb,'ja')
+                : bb.localeCompare(aa,'ja');
+
+        return asc ? aa-bb : bb-aa;
+
+    });
+
+    buildList();
+
+}
+
+buildList();
 </script>
 
 </body>
