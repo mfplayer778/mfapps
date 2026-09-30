@@ -22,6 +22,7 @@ thead tr:nth-child(2) th{top:40px;height:32px;z-index:99}
 
 input{background:#1e1e2f;color:#66ccff;border:1px solid #66ccff;border-radius:4px;padding:4px 6px;text-align:center;width:70px}
 .reinc-group,.reinc-input,.adjusted-header,.adjusted-value{color:#66ccff!important}
+tr.first-over td{background:#4b0082;color:#ffd166!important;font-weight:bold}
 .reinc-group{font-weight:bold}
 
 /* 範囲計算 */
@@ -903,7 +904,7 @@ function getReincarnation(){
  if(!Number.isFinite(n)||n<0)n=0;
  return n;
 }
-
+const EXP_LIMIT=2000000000;
 
 function renderTable(){
  const r=getReincarnation();
@@ -916,10 +917,12 @@ function renderTable(){
  tbody.innerHTML=EXP_DATA.map(row=>{
    const required=Math.max(1,Math.floor(row.raw));
    const adjusted=Math.max(1,Math.floor(row.raw/(r+1)));
+   const prevAdjusted=adjustedCumulative;
    cumulative+=required;
    adjustedCumulative+=adjusted;
+   const firstOver=prevAdjusted<=EXP_LIMIT&&adjustedCumulative>EXP_LIMIT;
 
-   return `<tr>
+   return `<tr${firstOver?' class="first-over"':''}>
      <td>${row.level.toLocaleString("ja-JP")}</td>
      <td>${formatExp(required)}</td>
      <td>${formatExp(cumulative)}</td>
