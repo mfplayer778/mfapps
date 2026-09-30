@@ -15,12 +15,22 @@ body {
 }
 h1 { margin-bottom: 20px; }
 
+/* 2列レイアウト */
+.appGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
 a.appLink {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: #4cafef;
   color: #000;
-  padding: 16px;
-  margin: 12px 0;
+  padding: 16px 8px;
   font-size: 18px;
   text-decoration: none;
   border-radius: 8px;
@@ -100,7 +110,7 @@ a.appLink.lock::before {
 
 /* スマホ対応 */
 @media (max-width: 480px){
-  a.appLink { font-size: 16px; padding: 14px; }
+  a.appLink { font-size: 14px; padding: 14px 6px; }
   #dialog input { font-size: 14px; padding: 8px; }
   #dialog button { font-size: 14px; padding: 8px; }
   .note { font-size: 11px; }
@@ -111,21 +121,24 @@ a.appLink.lock::before {
 
 <h1>MF便利ツール</h1>
 
+<div class="appGrid">
 <a href="app1.html" class="appLink">ジャッジカウン太君</a>
-<a href="app2.html" class="appLink">成功率算出君Ⅰ</a>
-<a href="app3.html" class="appLink">成功率算出君Ⅱ</a>
 <a href="app4.html" class="appLink">回復量測定君</a>
+<a href="app2.html" class="appLink">成功率算出君Ⅰ</a>
 <a href="app5.html" class="appLink">指数計算君</a>
-<a href="app6.html" class="appLink">レベル技判定君</a>
+<a href="app3.html" class="appLink">成功率算出君Ⅱ</a>
 <a href="app7.html" class="appLink">LP耐性吸収計算君</a>
+<a href="app13.html" class="appLink">必要経験値一覧君</a>
+<a href="app6.html" class="appLink">レベル技判定君</a>
 <a href="app8.html" class="appLink">主人公職業計算君</a>
-<a href="app9.html" class="appLink">ブラスト計算君</a>
 <a href="app10.html" class="appLink">タリメモ君</a>
+<a href="app9.html" class="appLink">ブラスト計算君</a>
 <a href="app11.html" class="appLink">タリ装着目安君</a>
 <a href="app12.html" class="appLink">電太君</a>
-  
-<!-- app8だけ合言葉必須、鍵アイコン付与 -->
+
+<!-- 合言葉必須、鍵アイコン付与 -->
 <a href="#" class="appLink lock" onclick="openGate()">工事中</a>
+</div>
 
 <!-- 合言葉入力 -->
 <div id="overlay">
@@ -138,6 +151,9 @@ a.appLink.lock::before {
     </div>
   </div>
 </div>
+
+<!-- 注意書き -->
+<p class="note">※一部精査できていない箇所があります。使用は自己責任でお願いします。問題やミスを見つけたら、こっそり教えていただけると助かります。</p>
 
 <script>
 const PASSWORD = "185";
@@ -172,11 +188,5 @@ document.getElementById("pw").addEventListener("keypress", function(e){
   if(e.key === "Enter") check();
 });
 </script>
-<!-- 注意書き -->
-<p class="note">※一部精査できていない箇所があります。使用は自己責任でお願いします。問題やミスを見つけたら、こっそり教えていただけると助かります。</p>
 </body>
 </html>
-</body>
-</html>
-
-
