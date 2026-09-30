@@ -34,11 +34,20 @@ tr.first-over td{background:#4b0082;color:#ffd166!important;font-weight:bold}
 
 @media(max-width:480px){
   body{padding:8px}
-  table{font-size:12px}
-  th,td{padding:4px}
-  input{font-size:12px;width:62px}
-  .range-result{font-size:16px}
-  .range-result .range-input{width:62px;font-size:15px}
+  h1{font-size:22px}
+  h2{font-size:16px;line-height:1.5}
+  .panel{padding:8px}
+  .table-wrap{max-height:70vh;max-height:70dvh}
+  table{min-width:0;font-size:12px}
+  th,td{padding:4px 2px}
+  thead th{white-space:normal;line-height:1.2;font-size:11px;padding:2px}
+  thead th[rowspan]{white-space:nowrap}
+  thead th.reinc-group{white-space:nowrap;font-size:12px!important}
+  .nb{display:inline-block}
+  input{font-size:16px;width:62px}
+  .range-result{font-size:15px;gap:4px}
+  .range-result .range-input{width:64px;font-size:16px;padding:6px 4px}
+  #rangeExpLabel{font-size:18px}
 }
 </style>
 </head>
@@ -59,9 +68,8 @@ tr.first-over td{background:#4b0082;color:#ffd166!important;font-weight:bold}
   </th>
 </tr>
 <tr>
-  <th class="adjusted-header">補正後必要経験値</th>
-  <th class="adjusted-header">補正後累計経験値</th>
-</tr>
+<th class="adjusted-header"><span class="nb">補正後</span><span class="nb">必要経験値</span></th>
+<th class="adjusted-header"><span class="nb">補正後</span><span class="nb">累計経験値</span></th></tr>
 </thead>
 <tbody id="expTableBody"></tbody>
 </table>
